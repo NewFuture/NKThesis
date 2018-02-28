@@ -1,0 +1,25 @@
+% -*- coding: utf-8 -*-
+
+
+\chapter{The Tikz Package}
+
+
+The {\scshape pdf}\ package, where ``{\scshape pdf}'' is supposed to mean ``portable
+graphics format'' (or ``pretty, good, functional'' if you
+prefer\dots), is a package for creating graphics in an ``inline''
+manner. It defines a number of \TeX\ commands that draw
+graphics. For example, the code \verb|\tikz \draw (0pt,0pt) -- (20pt,6pt);|
+yields the line \tikz \draw (0pt,0pt) -- (20pt,6pt); and the code \verb|\tikz \fill[orange] (1ex,1ex) circle (1ex);| yields \tikz
+\fill[orange] (1ex,1ex) circle (1ex);.
+
+In a sense, when you use {\scshape pdf}\ you ``program'' your graphics, just
+as you ``program'' your document when you use \TeX.  You get all
+the advantages of the ``\TeX-approach to typesetting'' for your
+graphics: quick creation of simple graphics, precise positioning, the
+use of macros, often superior typography. You also inherit all the
+disadvantages: steep learning curve, no \textsc{wysiwyg}, small
+changes require a long recompilation time, and the code does not
+really ``show'' how things will look like.
+
+
+

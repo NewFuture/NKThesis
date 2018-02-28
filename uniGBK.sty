@@ -1,0 +1,820 @@
+﻿%  Functions:
+%
+%  1. Convert the GBK encoding to the Unicode encoding on-the-fly.
+%  2. Emit proper \ToUnicode cmaps
+%  3. Adjust spaces around punctuation chars.
+%  4. preserve spaces between CJK and other chars.
+%  5. Redefine \CJKnumber and \CJKchar, compatible with hyperref.sty.
+%
+%  Usage:
+%       \usepackage{uniGBK}
+%
+\def\fileversion{0.0.7}
+\def\filedate{2011/02/01}
+\ProvidesPackage{uniGBK}[\filedate\space\fileversion]
+\RequirePackage{CJK}
+\newif\if@cupunct
+\newcount\cp@cnta
+\newcount\cp@cntb
+\newcount\cp@cntc
+\newcount\cp@cntd
+\newcount\cp@cnte
+
+\def\CJK@loadEncoding#1{}                                     % disable loading encoding files xxx.enc
+\expandafter\def\csname ver@CJKutf8.sty\endcsname{2020/01/01} % disable loading CJKutf8.sty
+\expandafter\def\csname ver@CJKspace.sty\endcsname{2020/01/01}% disable loading CJKspace.sty
+\expandafter\def\csname ver@CJKpunct.sty\endcsname{2020/01/01}% disable loading CJKpunct.sty
+
+% we suppress any unwanted spaces produced by linefeeds.
+\endlinechar \m@ne
+
+% gbkFirst    0x81: 0x81_0xFE
+% gbkSecond   0x40: 0x40_0x7E 0x80: 0x80_0xFE
+\def\cp@GBK@hook{{
+  \let\CJK@GBK@hook\relax
+  \let\cugbk\cpgbk
+  \cp@cnta="81\relax
+  \cp@cntb="40\relax
+  \input{gbktouni.tex}
+  \cp@cnta=0\relax
+  \cp@setpunctmacro
+    161/174,161/176,161/184,161/186,161/178,163/168,163/219,163/251,%
+    161/180,161/182,161/188,161/190,161/170,161/173,161/162,161/163,%
+    163/172,163/174,163/186,163/187,163/161,163/191,163/165,161/179,%
+    163/169,163/221,163/253,161/181,161/183,161/189,161/191,161/175,%
+    161/177,161/185,161/187,/,\relax
+  \cp@setpunct}}
+
+\let\cp@GB@hook\cp@GBK@hook
+
+\expandafter\def\csname cp@UTF8@hook\endcsname{{
+  \expandafter\let\csname CJK@UTF8@hook\endcsname\relax
+  \let\cugbk\cp@uniutf
+  \cp@cntc=0\relax
+  \cp@cntd=23940\relax
+  \input{gbktouni.tex}
+  \cp@setpunct}}
+
+\def\cp@setpunctmacro#1/#2,{
+  \edef\cp@temp{#1}
+  \ifx\cp@temp\@empty
+  \else
+    \lccode`\.=#1
+    \lccode`\,=#2
+    \lowercase{\edef\cp@tempa{\expandafter\noexpand\csname .,\endcsname}}
+    \edef\cp@temp{\noexpand\global\noexpand\@cupuncttrue\expandafter\expandafter\expandafter
+      \noexpand\cp@tempa}
+    \expandafter\expandafter\expandafter\gdef\expandafter\cp@tempa\expandafter{\cp@temp}
+    \advance \cp@cnta 1\relax
+    \expandafter\cp@setpunctmacro
+  \fi}
+
+\def\cp@setpunct{
+  \cp@cnta=0\relax
+  \cp@@setpunct 2018,201C,300C,300E,3014,FF08,FF3B,FF5B,3008,300A,3016,3010,%
+  2014,2026,3001,3002,FF0C,FF0E,FF1A,FF1B,FF01,FF1F,FF05,3015,%
+  FF09,FF3D,FF5D,3009,300B,3017,3011,2019,201D,300D,300F,,\relax}
+
+\def\cp@@setpunct#1,{
+  \edef\cp@temp{#1}
+  \ifx\cp@temp\@empty
+  \else
+    \cp@@@setpunct#1
+    \advance \cp@cnta 1\relax
+    \expandafter\cp@@setpunct
+  \fi}
+
+\def\cp@@@setpunct#1#2#3#4{
+  \lowercase{\edef\CJK@@temp{#1#2}}
+  \expandafter\xdef\csname cp@pn@@\the\cp@cnta\endcsname{\CJK@@temp#3#4}
+  \ifnum\cp@cnta<12
+    \expandafter\gdef\csname cp@punct@#1#2#3#4\endcsname{l}
+  \else
+    \expandafter\gdef\csname cp@punct@#1#2#3#4\endcsname{r}
+  \fi
+  \cp@@uniutf#1#2#3#4
+  \lowercase{\expandafter\xdef\csname .,;\endcsname{
+      \noexpand\global\noexpand\@cupuncttrue\noexpand\CJK@HeX\cp@temp}}}
+
+\def\cp@uniutf#1#2#3#4{
+  \cp@@uniutf#1#2#3#4
+  \lowercase{\expandafter\xdef\csname .,;\endcsname{\noexpand\CJK@HeX\cp@temp}}
+  \advance\cp@cntc 1\relax
+  \ifnum\cp@cntc<\cp@cntd
+    \expandafter\cp@uniutf
+  \fi}
+
+\def\cp@@uniutf#1#2#3#4{
+  \lccode`\.="E#1\relax
+  \@tempcnta="#2#3#4\relax
+  \@tempcntb=\@tempcnta
+  \divide\@tempcnta 64\relax
+  \lccode`\,=\numexpr\@tempcnta+128\relax
+  \lccode`\;=\numexpr\@tempcntb-\@tempcnta*64+128\relax
+  \def\cp@temp{#1#2#3#4}}
+
+\def\cpgbk#1#2#3#4{
+  \lccode`\.=\cp@cnta
+  \lccode`\,=\cp@cntb
+  \def\cp@temp{#1#2#3#4}
+  \lowercase{\expandafter\xdef\csname .,\endcsname{\noexpand\CJK@HeX\cp@temp}}
+  \advance\cp@cntb 1\relax
+  \ifnum\cp@cntb="7F\relax
+    \advance\cp@cntb 1\relax
+  \fi
+  \ifnum\cp@cntb="FF\relax
+    \lccode`\,=92\relax
+    \lowercase{\global\expandafter\let\csname .\string\\\expandafter\endcsname
+      \csname .,\endcsname}
+    \lccode`\,=123\relax
+    \lowercase{\global\expandafter\let\csname .\string\{\expandafter\endcsname
+      \csname .,\endcsname}
+    \lccode`\,=125\relax
+    \lowercase{\global\expandafter\let\csname .\string\}\expandafter\endcsname
+      \csname .,\endcsname}
+    \cp@cntb="40\relax
+    \advance\cp@cnta 1\relax
+  \fi
+  \ifnum\cp@cnta<"FF\relax
+    \expandafter\cpgbk
+  \fi}
+
+\chardef\cp@z=0\relax
+
+\def\cp@insert@space{ }
+\def\CJK@HeX#1#2#3#4{
+  \xdef\cp@lastkern{\number\lastkern}
+  {\if@cupunct
+    \cp@ULspecials
+  \else
+%    \ifnum\lastnodetype=0 %
+%      \cp@insert@space
+%    \else
+      \ifnum\lastnodetype=10 %
+        \cp@insert@space
+      \fi
+%    \fi
+    \ifnum\cp@lastkern>\cp@z
+      \ifnum\cp@lastcharclass=\cp@z
+        \CJKglue
+      \else
+        \cp@glue
+      \fi
+    \fi
+  \fi
+  \lowercase{\def\CJK@plane{#1#2}}
+  \ifcsname\CJK@family/\f@series/\f@shape/\CJK@plane/\f@size\endcsname
+    \csname\CJK@family/\f@series/\f@shape/\CJK@plane/\f@size\endcsname
+  \else
+    \usefont{C70}{\CJK@family}{\f@series}{\f@shape}
+    \get@external@font
+    \global\expandafter\font\csname\CJK@family/\f@series
+      /\f@shape/\CJK@plane/\f@size\endcsname=\external@font
+  \fi
+  \if@cupunct
+    \CJKpunctsymbol{#3#4}
+    \global\@cupunctfalse
+  \else
+    \CJKsymbol{#3#4}
+  \fi}
+  \CJK@ignorespaces}
+
+\def\cp@ULglue{
+  \ifx\hskip\UL@hskip
+      \egroup
+      \UL@stop
+      \UL@start
+      \bgroup
+  \fi
+  \ifnum\cp@lastcharclass=\tw@
+    \CJKglue
+  \fi}
+
+\let\cp@glue\relax
+
+\def\CJK@HeXpdf#1#2#3#4{
+  \CJK@NumToOctal{"#1#2}
+  \CJK@NumToOctal{"#3#4}}
+
+\def\CJK@XX#1#2{
+  \csname\string#1\string#2\endcsname}
+
+\def\CJK@XXX#1#2#3{
+  \csname\string#1\string#2\string#3\endcsname}
+
+\def\CJK@XXXpdf#1#2#3{
+  \CJK@NumToOctal{\numexpr(\number`#1-224)*16+(\number`#2-2)/4-32\relax}
+  \CJK@NumToOctal{\numexpr(\number`#2-(\number`#2-2)/4*4)*64+\number`#3-128\relax}}
+
+\ifdefined\pdfstringdefPreHook
+  \g@addto@macro\pdfstringdefPreHook{
+    \let\CJK@HeX\CJK@HeXpdf
+    \let\CJK@XXX\CJK@XXXpdf}
+\fi
+
+%%%
+%%% From CJKutf8.sty
+%%%
+%%%
+% If pdftex is used, emit proper \ToUnicode cmaps. This code is based on
+% cjk-unicmap.sty, part of the hangul-ucs package written by KIM Kang-Soo
+% and KIM Do-Hyun.
+% variants for PDF bookmarks.
+\edef\0{\string\0}
+\edef\1{\string\1}
+\edef\2{\string\2}
+\edef\3{\string\3}
+
+\def\CJK@NumToOctal#1{
+  \ifcase\numexpr(#1+32)/64-1\relax \0\or \1\or \2\or \3\fi
+  \number\numexpr(#1+64-(#1+32)/64*64+4)/8-1\relax
+  \number\numexpr #1+8-(#1+4)/8*8\relax}
+
+\iftrue
+  % Redefine \pickup@font (again).
+  \def\pickup@font{
+    \CJK@ifundefined\CJK@plane
+      {\expandafter\ifx\font@name \relax%       % old definition
+         \define@newfont
+       \fi}
+      {\expandafter%                            % CJK extension
+        \ifx\csname \curr@fontshape/\f@size/\CJK@plane\endcsname \relax
+         \define@newfont
+         \def\CJK@temp{v}
+         \ifx\CJK@temp\CJK@plane
+           \expandafter
+            \ifx\csname CJK@cmap@\f@family\CJK@plane\endcsname \relax
+           \else
+             \csname CJK@cmap@\f@family\CJK@plane\endcsname
+           \fi
+         \else
+           \CJK@addcmap\CJK@plane
+         \fi
+       \else
+         \xdef\font@name{
+           \csname \curr@fontshape/\f@size/\CJK@plane\endcsname}
+       \fi}}
+
+  \def\CJK@addcmap#1{
+    {\unless\ifcsname CJK@CMap@#1\endcsname
+       \expandafter\uppercase\expandafter{\expandafter\def\expandafter\CJK@gtemp\expandafter{#1}}
+       \immediate\pdfobj stream {
+         /CIDInit /ProcSet findresource begin                      %
+           12 dict begin                                           %
+             begincmap                                             %
+               /CIDSystemInfo <<                                   %
+                 /Registry (TeX)                                   %
+                 /Ordering (Uni#1)                                 %
+                 /Supplement 0 >> def                              %
+               /CMapName /TeX-Uni#1-0 def                          %
+               1 begincodespacerange <00> <FF> endcodespacerange   %
+               1 beginbfrange <00> <FF> <\CJK@gtemp 00> endbfrange %
+             endcmap                                               %
+             CMapName currentdict /CMap defineresource             %
+             pop                                                   %
+           end                                                     %
+         end }
+       \expandafter\xdef\csname CJK@CMap@#1\endcsname{
+         \the\pdflastobj}
+     \fi
+     \pdffontattr\font@name{
+       /ToUnicode \csname CJK@CMap@#1\endcsname\space 0 R}}}
+\fi
+
+%  From  CJKpunct.sty
+%
+\newif\if@cp@dokerning
+
+\def\CJKsymbol#1{
+  \symbol{"#1}
+  \gdef\cp@lastcharclass{0}}
+
+\def\cp@lastcharclass{0}
+\def\cp@lastkern{0}
+\def\CJKpunctsymbol#1{
+  \cp@setfamily
+%  \edef\cp@family{\CJK@family}
+  \edef\cp@familystyle{\cp@family\cp@style}
+  \cp@setmarginkerning
+  \edef\cp@currentpunct{\CJK@plane#1}
+    \edef\cp@currentcharclass{
+      \csname cp@@\cp@currentpunct\endcsname}
+    {{{%  We need three braces for CJKulem to work
+    \ifnum\cp@lastkern>0\relax
+      \ifnum\cp@lastcharclass>0\relax
+        \unkern
+        \unkern
+        \cp@unskip
+        \cp@setkern{\cp@lastpunct}{\cp@currentpunct}
+        \kern \csname cp\cp@familystyle
+          @kern\cp@lastpunct @\cp@currentpunct\endcsname
+        \ifnum\cp@currentcharclass=1\relax
+          \cp@nobreak
+          \vrule width \csname cp\cp@familystyle
+            @lrule@\cp@currentpunct\endcsname depth \z@ height \z@
+        \fi
+      \else
+%        \cp@ULspecials
+        \ifnum\cp@currentcharclass=1\relax
+          \hskip \csname cp\cp@familystyle
+            @lglue@\cp@currentpunct\endcsname  plus 0.1em minus 0.1 em
+          \vrule width \csname cp\cp@familystyle
+            @lrule@\cp@currentpunct\endcsname depth \z@ height \z@
+        \else
+          \ifcsname cp@specialpunct\cp@currentpunct\endcsname
+            \CJKglue  % breakable
+          \else
+            \nobreak
+          \fi
+        \fi
+      \fi
+    \fi
+    \global\edef\cp@lastpunct{\cp@currentpunct}
+    \symbol{"#1}
+    \ifnum\cp@currentcharclass=2\relax
+      \vrule width \csname cp\cp@familystyle
+        @rrule@\cp@currentpunct\endcsname depth \z@ height \z@
+
+      \hskip \csname cp\cp@familystyle
+        @rglue@\cp@currentpunct\endcsname  plus 0.1em minus 0.1 em
+    \fi
+    \global\let\cp@lastcharclass\cp@currentcharclass}}}}
+
+\def\cp@setfamily{
+  \ifcsname cp/\CJK@family/\f@series/\f@shape\endcsname
+    \edef\cp@family{\csname cp/\CJK@family/\f@series/\f@shape\endcsname}
+  \else
+    \bgroup
+      \def\CJK@plane{30}
+      \usefont{C70}{\CJK@family}{\f@series}{\f@shape}
+      \get@external@font
+      \expandafter\cp@getfam\external@font\cp@
+      \ifx\cp@fam\@empty
+        \xdef\cp@family{\CJK@family}
+      \else
+        \xdef\cp@family{\cp@fam}
+      \fi
+    \egroup
+    \expandafter\xdef\csname cp/\CJK@family/\f@series/\f@shape\endcsname{\cp@family}
+  \fi}
+
+{
+  \catcode`\u=12 %
+  \catcode`\n=12 %
+  \catcode`\i=12 %
+  \catcode`\s=12 %
+  \catcode`\l=12 %
+  \gdef\cp@getfam#130#2\cp@{
+    \cp@@getfam #1/uni/\cp@}
+  \gdef\cp@@getfam#1uni#2/#3\cp@{
+    \cp@@@getfam#2sl\cp@}
+  \gdef\cp@@@getfam#1sl#2\cp@{
+    \edef\cp@fam{#1}}
+}
+
+\def\CJKpunctmapfamily#1#2#3#4#5{
+  \expandafter\edef\csname cp/#2/#3/#4\endcsname{#5}}
+
+\def\cp@setmarginkerning{
+  \ifcsname cp@@\cp@familystyle\endcsname
+  \else
+    \expandafter\gdef\csname cp@@\cp@familystyle\endcsname{}
+    \ifcsname CJKpunct@\cp@family @spaces\endcsname
+      \PackageInfo{uniGBK}{use punctuation spaces for family '\cp@family'
+        \space with punctstyle (\cp@currentpunctstyle)}\relax
+      \edef\cp@spaces{\csname CJKpunct@\cp@family @spaces\endcsname}
+    \else
+      \ifcsname cp@spaces@\cp@family\endcsname
+      \else
+        \PackageInfo{uniGBK}{punctuation spaces for family '\cp@family' do not exist.
+          \space Use family 'def' instead.}\relax
+         \global\expandafter\def\csname cp@spaces@\cp@family\endcsname{}
+      \fi
+      \edef\cp@spaces{\csname cp@def@spaces\endcsname}
+    \fi
+    \cp@cnta=0\relax
+    \expandafter\cp@@setmarginkerning\cp@spaces
+  \fi}
+
+\def\cp@@setmarginkerning#1,#2,{
+  \edef\cp@temp{#1}
+  \ifx\cp@temp\@empty
+  \else
+    \edef\cp@encpn{\csname cp@pn@@\the\cp@cnta\endcsname}
+    \ifnum\cp@cnta=12\relax
+      {\cp@cntb=#1\relax
+      \advance\cp@cntb #2\relax
+      \advance\cp@cntb 2\relax
+      \cp@numtostring{\cp@cntb}
+      \edef\cp@temp{\csname cp@pn@@12\endcsname}
+      \cp@cntc=0\relax
+      \loop
+        \global\expandafter\edef\csname cp\cp@familystyle @kern\cp@temp @\cp@temp\endcsname{
+            -0.\cp@decimal em}
+        \advance \cp@cntc 1\relax
+      \ifnum\cp@cntc<6\repeat}
+    \fi
+    \ifnum\cp@cnta<12
+      \def\cp@lr{l}
+      \cp@cntb=#1\relax
+      \expandafter\gdef\csname cp@@\cp@encpn\endcsname{1}
+    \else
+      \def\cp@lr{r}
+      \cp@cntb=#2\relax
+      \expandafter\gdef\csname cp@@\cp@encpn\endcsname{2}
+    \fi
+
+    \@cp@dokerningtrue
+    \ifnum\cp@style=\cp@ps@plain\relax
+      \@cp@dokerningfalse
+    \else
+      \ifcsname cp@specialpunct\cp@encpn\endcsname
+        \@cp@dokerningfalse
+      \fi
+    \fi
+
+    \ifnum\cp@style=\cp@ps@banjiao
+      \def\cp@sidespaces{12}
+    \else
+      \def\cp@sidespaces{15}
+    \fi
+
+    \if@cp@dokerning
+      \advance\cp@cntb -\cp@sidespaces\relax
+      \ifnum\cp@cntb<0\relax
+        \cp@cntb=0\relax
+      \fi
+      \cp@cntd=\cp@cntb
+
+      \ifcase\cp@style
+          % hangmobanjiao
+      \or % quanjiao
+      \or % banjiao
+        \advance\cp@cntd -50\relax
+      \or % kaiming
+        \ifcsname cp@kaiming\cp@encpn\endcsname
+        \else
+          \advance\cp@cntd -50\relax
+        \fi
+      \or %CCT
+        \advance\cp@cntd -20\relax
+      \fi
+      \cp@cnte=\cp@cntd
+      \ifnum\cp@cntd<0\relax
+        \cp@cntd=0\relax
+      \fi
+    \else
+      \cp@cntb=0\relax
+      \cp@cntc=0\relax
+      \cp@cntd=0\relax
+      \cp@cnte=0\relax
+    \fi
+    \cp@numtostring{\cp@cntb}
+    \global\expandafter\edef\csname cp\cp@familystyle @\cp@lr rule@\cp@encpn\endcsname{
+        -0.\cp@decimal em}
+    \cp@numtostring{\cp@cntd}
+    \global\expandafter\edef\csname cp\cp@familystyle @\cp@lr glue@\cp@encpn\endcsname{
+        0.\cp@decimal em}
+    \global\expandafter\edef\csname cp\cp@familystyle @\cp@lr oglue@\cp@encpn\endcsname{
+        \the\cp@cnte}
+    \advance \cp@cnta 1\relax
+    \expandafter\cp@@setmarginkerning
+  \fi}
+
+\def\cp@numtostring#1{
+  \edef\cp@decimal{\the#1}
+  \ifnum\cp@decimal<10\relax
+    \edef\cp@decimal{0\cp@decimal}
+  \fi}
+\def\cp@setkern#1#2{
+  \ifcsname cp\cp@familystyle @kern#1@#2\endcsname
+  \else
+    \cp@cnta=0\relax
+    \ifcsname cp\cp@familystyle @roglue@#1\endcsname
+      \advance\cp@cnta\csname cp\cp@familystyle @roglue@#1\endcsname
+    \fi
+    \ifcsname cp\cp@familystyle @loglue@#2\endcsname
+      \advance\cp@cnta\csname cp\cp@familystyle @loglue@#2\endcsname
+    \fi
+    \relax
+    \ifcase\cp@style
+        % hangmobanjiao
+    \or % quanjiao
+      \advance\cp@cnta -50\relax
+    \or % banjiao
+    \or % kaiming
+      \ifcsname cp@kaiming#1\endcsname
+        \edef\cp@temp{-\csname cp\cp@familystyle @roglue@#1\endcsname}
+        \advance\cp@cnta\cp@temp
+        \ifcsname cp\cp@familystyle @loglue@#2\endcsname
+          \advance\cp@cnta -50\relax
+        \fi
+      \fi
+    \fi
+    \ifnum\cp@cnta<0\relax
+      \cp@cnta=0\relax
+    \fi
+    \cp@numtostring{\cp@cnta}
+    \global\expandafter\edef\csname cp\cp@familystyle @kern#1@#2\endcsname{
+        0.\cp@decimal em}
+  \fi}
+
+\let\cp@unskip\unskip
+\def\cp@UL@unskip{
+  \ifcsname cp\cp@familystyle
+    @rglue@\cp@lastpunct\endcsname
+    \hskip -\csname cp\cp@familystyle @rglue@\cp@lastpunct\endcsname \relax
+  \fi}
+
+\@ifundefined{UL@hskip}{\let\UL@hskip\relax}{}
+
+\def\cp@punctUL@group{
+  \ifx\hskip\UL@hskip
+      \egroup
+      \UL@stop
+      \UL@start
+      \bgroup
+  \fi}
+
+\def\cp@ULspecials{}
+
+\AtBeginDocument{
+  \ifcsname UL@hook\endcsname
+    \addto@hook\UL@hook{
+       \let\cp@glue\cp@ULglue
+       \def\CJK@ignorespaces{\CJK@CJK\ignorespaces}
+       \let\cp@unskip\cp@UL@unskip
+       \let\cp@ULspecials\cp@punctUL@group}
+  \fi}
+
+\def\CJKpunctallowbreakbetweenpuncts{
+  \def\cp@nobreak{
+    \ifnum\cp@lastcharclass=2
+      \unless\ifcsname cp@specialpunct\cp@currentpunct\endcsname
+        \hskip 0pt
+      \fi
+    \fi}}
+
+\def\CJKpunctnobreakbetweenpuncts{
+  \let\cp@nobreak\nobreak}
+\CJKpunctnobreakbetweenpuncts
+\def\CJKpunctstyle#1{
+  \ifcsname cp@ps@#1\endcsname
+    \edef\cp@currentpunctstyle{#1}
+    \edef\cp@style{\csname cp@ps@#1\endcsname}
+    \ifnum\cp@style=\cp@ps@plain\relax
+      \CJKpunctallowbreakbetweenpuncts
+    \fi
+  \else
+    \PackageWarning{uniGBK}{Punctstyle #1\space is not defined.}\relax
+  \fi}
+
+\let\punctstyle\CJKpunctstyle
+\def\cp@ps@hangmobanjiao{0}
+\def\cp@ps@marginkerning{0}
+\def\cp@ps@quanjiao{1}
+\def\cp@ps@fullwidth{1}
+\def\cp@ps@banjiao{2}
+\def\cp@ps@halfwidth{2}
+\def\cp@ps@kaiming{3}
+\def\cp@ps@mixedwidth{3}
+\def\cp@ps@CCT{4}
+\def\cp@ps@plain{5}
+\AtBeginDocument{\punctstyle{quanjiao}}
+
+\def\CJKplainout{\punctstyle{plain}}
+\let\CJKnormalout\relax
+
+\expandafter\def\csname cp@specialpunct2014\endcsname{}%  破折号
+\expandafter\def\csname cp@specialpunct2026\endcsname{}%  省略号
+\expandafter\def\csname cp@kaiming3002\endcsname{}%
+\expandafter\def\csname cp@kaimingff01\endcsname{}%
+\expandafter\def\csname cp@kaimingff1F\endcsname{}%
+
+\def\cp@def@spaces{65,5,40,5,45,10,45,10,45,10,55,5,50,10,45,10,45,10,45,0,45,5,%
+45,5,5,5,10,10,5,60,0,60,5,70,10,70,10,60,10,60,20,60,10,30,10,10,%
+5,45,10,55,10,50,10,45,10,45,5,45,5,45,5,40,0,65,5,40,10,45,10,45,,,}
+
+\def\CJKpunctsetkern#1#2#3{
+  \cp@setfamily
+  \csname cp@getpunctchars@\CJK@@@enc\endcsname#1#2
+  \global\expandafter\edef\csname cp\cp@family\cp@style @kern\cp@punctchars\endcsname{
+    #3}}
+
+\def\cp@getpunctchars@GBK#1#2#3#4{
+  \expandafter\expandafter\expandafter
+    \cp@getunicode\csname cp\number`#1@\number`#2\endcsname
+  \edef\cp@punctchars{\cp@getcharstemp}
+  \expandafter\expandafter\expandafter
+    \cp@getunicode\csname cp\number`#3@\number`#4\endcsname
+  \edef\cp@punctchars{\cp@punctchars @\cp@getcharstemp}}
+
+\expandafter\def\csname cp@getpunctchars@UTF8\endcsname#1#2#3#4#5#6{
+  \expandafter\expandafter\expandafter
+    \cp@getunicode\csname \string#1\string#2\string#3\endcsname
+  \edef\cp@punctchars{\cp@getcharstemp}
+  \expandafter\expandafter\expandafter
+    \cp@getunicode\csname \string#4\string#5\string#6\endcsname
+  \edef\cp@punctchars{\cp@punctchars @\cp@getcharstemp}}
+
+\def\cp@getunicode#1#2#3#4#5#6#7{
+  \lowercase{\def\cp@getcharstemp{#4#5}}
+  \edef\cp@getcharstemp{\cp@getcharstemp#6#7}}
+
+\IfFileExists{CJKpunct.spa}{\input{CJKpunct.spa}}{}
+%
+%  From CJKspace.sty
+%
+\def\CJK@CJK{
+  \ifnum\cp@lastcharclass=\cp@z
+    \kern -1sp\kern 1sp
+  \else
+    \kern -2sp\kern 2sp
+  \fi}
+
+\renewenvironment{CJK*}[3][]{
+    \let\CJK@ignorespaces\CJK@@@ignorespaces
+    \CJK@envStart{#1}{#2}{#3}
+    \csname cp@#2@hook\endcsname}
+  {\CJK@envEnd}
+
+\def\CJK@@ignorespaces{
+  \expandafter\CJK@@@ignorespaces}
+
+\def\CJK@@@ignorespaces{
+  \futurelet\CJK@next@token
+  \CJK@check@next}
+
+\def\CJK@check@next{
+  \ifx\CJK@next@token\@sptoken
+    \expandafter\CJK@@check@next
+  \else
+    \expandafter\CJKs@@check@next
+  \fi}
+
+\def\CJKs@@check@next{
+  \if\relax\noexpand\CJK@next@token
+    \let\CJK@next@token\relax
+    \CJK@CJK
+  \else
+    \ifnum\cp@lastcharclass=\cp@z
+      \ifcat\CJK@next@token A\relax
+        \cp@insert@space
+      \else
+        \ifcat\CJK@next@token $\relax
+          \cp@insert@space
+        \else
+          \CJK@CJK
+        \fi
+      \fi
+    \else
+      \CJK@CJK
+    \fi
+  \fi}
+
+{
+  \catcode`\-=11
+  \global\let\cjk-cjk\CJK@CJK
+  \global\let\-empty\@empty
+  % define \CJK@@check@next to gobble subsequent space tokens.
+  \def\:{\CJK@@check@next}
+  \global\expandafter\def\: {
+    \futurelet\cjk-let-token
+    \cjk---check-next}
+
+  % since characters in the output of \meaning\something have
+  %     catcode 12, we have to change the catcodes of `\', `C',
+  %     `J', `K', and `@'.
+  \catcode`\/=0
+  \catcode`\C=12
+  \catcode`\J=12
+  \catcode`\K=12
+  \catcode`\@=12
+  \catcode`\\=12
+  /gdef/cjk---check-next{
+    /unless/ifx/cjk-let-token/par
+      /expandafter/cjk-get-keystring
+        /meaning/cjk-let-token\CJK@@@/cjk-space-stop
+      /cjk-temp
+    /fi}
+
+  % we check whether we can find the signature `\CJK@@@' at the
+  %     beginning of following macro -- only the CJK package
+  %     inserts this.
+  /long/gdef/cjk-get-keystring#1\CJK@@@#2/cjk-space-stop{
+    /edef/cjk-temp{#2}
+    /ifx/cjk-temp/-empty
+      /def/cjk-temp{ }
+    /else
+      /def/cjk-temp{/cjk-cjk}
+    /fi}
+}
+
+%
+%   Redefine \CJKnumber:  compatible with hyperref.
+\RequirePackage{CJKnumb}\relax
+\endlinechar \m@ne
+
+\DeclareRobustCommand\CJKnumber[1]{
+  \HyPsd@CJKnumber{#1}}
+
+% Redefine  \HyPsd@CJKnumber
+\AtBeginDocument{\let\HyPsd@CJK@Unicode\Unicode
+  \def\HyPsd@CJKnumber#1{
+    \ifnum#1<\z@
+      \CJK@minus
+      \expandafter\CJKnumber@a\expandafter{\number-\number#1}{0}
+    \else
+      \CJKnumber@a{#1}{0}
+    \fi}}
+
+\def\CJKnumber@a#1#2{%                             \let, \edef, ... are not available!
+  \ifnum #1>99999999 %
+    \CJKnumber@b{#1}{0000000}{0}{\CJK@hundredmillion}
+  \else
+    \ifnum #1>9999 %
+      \CJKnumber@b{#1}{000}{0}{\CJK@tenthousand}
+    \else
+      \ifnum #1>999 %
+        \CJKnumber@b{#1}{00}{1}{\CJK@thousand}
+      \else
+        \ifnum #1>99 %
+          \CJKnumber@b{#1}{0}{1}{\CJK@hundred}
+        \else
+          \ifnum #1>9 %
+            \ifnum #1>19 %
+              \CJK@digit{\numexpr (#1-5)/10\relax}\CJK@ten
+            \else
+              \ifnum #2>0 %
+                \CJK@one\CJK@ten
+              \else
+                \CJK@ten
+              \fi
+            \fi
+            \ifnum\numexpr #1-(#1-5)/10*10\relax >0 %
+              \CJK@digit{\numexpr #1-(#1-5)/10*10\relax}
+            \fi
+          \else
+            \CJK@digit{#1}
+          \fi
+        \fi
+      \fi
+    \fi
+  \fi}
+
+\def\CJKnumber@b#1#2#3#4{
+  \CJKnumber@a{\numexpr (#1-5#2)/10#2\relax}{#3}#4
+  \ifnum \numexpr #1-(#1-5#2)/10#2*10#2\relax>0 %
+    \ifnum \numexpr #1-(#1-5#2)/10#2*10#2\relax<1#2 %
+      \CJK@zero
+    \fi
+    \CJKnumber@a{\numexpr #1-(#1-5#2)/10#2*10#2\relax}{1}
+  \fi}
+%
+%   Redefine \CJKchar:  compatible with hyperref.
+%   \cp@char@XXX: convert a number XXX to an active or ordinary char.
+\bgroup
+  \CJK@makeActive
+  \@tempcnta=0 %
+  \loop
+    \lccode`\.=\@tempcnta
+    \lowercase{\expandafter\gdef\csname cp@char@\number\@tempcnta\endcsname{.}}
+    \advance\@tempcnta 1 %
+    \ifnum\@tempcnta <"81\repeat
+  \loop
+    \lccode`\.=\@tempcnta
+    \lowercase{\def\temp{\expandafter\gdef\csname cp@char@\number\@tempcnta\endcsname{.}}}
+    \scantokens\expandafter{\temp}
+    \advance\@tempcnta 1 %
+    \ifnum\@tempcnta <256\repeat
+\egroup
+
+\DeclareRobustCommand{\CJKchar}[1]{
+  \ifcsname CJKchar@test#1\endcsname
+    \expandafter\CJKchar@pdfx\expandafter#1%
+  \else
+    \CJKchar@pdfy#1%
+  \fi}
+
+\expandafter\def\csname CJKchar@test[\endcsname{}
+
+\def\CJKchar@pdfx[#1]#2#3{
+  \csname CJKchar@#1\endcsname{#2}{#3}}
+
+\def\CJKchar@GBK#1#2{
+  \csname cp@char@\number#1\expandafter\expandafter\expandafter\endcsname\csname cp@char@\number#2\endcsname}
+\let\CJKchar@GB\CJKchar@GBK
+
+\expandafter\def\csname CJKchar@UTF8\endcsname#1#2{
+  \csname cp@char@\number\numexpr (#1+8)/16+223\relax\expandafter\expandafter\expandafter\endcsname
+  \csname cp@char@\number\numexpr (#1+16-(#1+8)/16*16)*4+(#2+32)/64+127\relax\expandafter\expandafter\expandafter\endcsname
+  \csname cp@char@\number\numexpr (#2+64-(#2+32)/64*64)+128\relax\endcsname}
+
+\DeclareRobustCommand{\Unicode}{\csname CJKchar@UTF8\endcsname}
+
+\def\CJKchar@pdfy#1\fi#2{
+  \fi\csname cp@char@\number#1\expandafter\expandafter\expandafter\endcsname\csname cp@char@\number#2\endcsname}
+%
+\let\@afterindentfalse\relax
+\endlinechar `\^^M
+\endinput

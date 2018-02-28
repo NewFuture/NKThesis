@@ -1,0 +1,107 @@
+%!TEX encoding = UTF-8 Unicode
+%!TEX program = xelatex
+% -*- coding: utf-8 -*-
+%%
+%%
+%%
+%%
+%%
+%%
+%%  本模板可以使用以下两种方式编译:
+%%
+%%     1. PDFLaTeX
+%%
+%%     2. XeLaTeX [推荐]
+%%
+%%  注意：
+%%    1. 在改变编译方式前应先删除 *.toc 和 *.aux 文件，
+%%       因为不同编译方式产生的辅助文件格式可能并不相同。
+%%
+%%
+\documentclass[12pt,openright]{book}
+
+
+\usepackage{ifxetex}
+\ifxetex
+  \usepackage[bookmarksnumbered]{hyperref}
+\else
+  \usepackage[unicode,bookmarksnumbered]{hyperref}
+\fi
+
+\usepackage[emptydoublepage]{NKThesis}   % 中文
+%\usepackage[emptydoublepage,English]{NKThesis} % 英文
+
+%   根据需要选择 biblatex 宏包选项.
+\usepackage[backend = bibtex8, defernumbers = true,  sorting=none,  style = nkthesis]{biblatex}
+\hypersetup{colorlinks=true,
+            pdfborder=0 0 1,
+            citecolor=black,
+            linkcolor=black}
+\usepackage{tikz}
+
+\addbibresource{nkthesis.bib}
+\DeclareBibliographyCategory{cited}
+\AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
+
+\graphicspath{{image/}}
+
+\includeonly{
+abstract,
+manual,
+tikz,
+acknowledgements,
+references,
+appendices,
+resume
+}
+\newtheorem{Theorem}{\hskip 2em 定理}[chapter]
+\newtheorem{Lemma}[Theorem]{\hskip 2em 引理}
+\newtheorem{Corollary}[Theorem]{\hskip 2em 推论}
+\newtheorem{Proposition}[Theorem]{\hskip 2em 命题}
+\newtheorem{Definition}[Theorem]{\hskip 2em 定义}
+\newtheorem{Example}[Theorem]{\hskip 2em 例}
+\begin{document}
+
+%  设置基本信息
+%  注意:  逗号`,'是项目分隔符. 如果某一项的值出现逗号, 应放在花括号内, 如 {,}
+%
+\NKTsetup{%
+	论文题目(中文) = 学位论文的标题,
+	副标题        = ——论文的副标题,
+	论文题目(英文) = Title of thia Thesis in English,
+	论文作者       = ,
+	学号           = ,
+	指导教师       = ,
+	申请学位       = ,
+	培养单位       = ,
+	学科专业       = ,
+	研究方向       = ,
+	中图分类号     = ,
+	UDC            = ,
+	学校代码       = 10055,
+	密级           = 公开,
+	% 公开 | 限制 | 秘密 | 机密, 若为公开, 不填以下三项
+	保密期限       = ,
+	审批表编号     = ,
+	批准日期       = ,
+	论文完成时间   = 二〇一八年三月,
+	答辩日期       = ,
+	论文类别       = 学历硕士,
+	% 博士 | 学历硕士 | 硕士专业学位 | 高校教师 | 同等学力硕士
+	院/系/所       = ,
+	专业           = ,
+	联系电话       = ,
+	Email          = ,
+	通讯地址(邮编) = ,
+	备注           = }
+
+
+\input{./tex/abstract}
+\tableofcontents
+\input{./tex/manual}
+\input{./tex/tikz}
+\input{./tex/references}
+\input{./tex/acknowledgements}
+\input{./tex/appendices}
+\input{./tex/resume}
+\end{document}

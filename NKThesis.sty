@@ -1,0 +1,769 @@
+% -*- coding: utf-8 -*-
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{NKThesis}[2016/10/12]
+
+\DeclareOption{emptydoublepage}{
+  \def\cleardoublepage{
+    \clearpage
+    \if@twoside
+      \ifodd\c@page
+      \else
+        \hbox{}
+        \thispagestyle{empty}
+        \newpage
+        \if@twocolumn
+          \hbox{}
+          \thispagestyle{empty}
+          \newpage
+        \fi
+      \fi
+    \fi}}
+
+\newif\if@NKT@English
+\DeclareOption{English}{\@NKT@Englishtrue}
+
+\ProcessOptions\relax
+
+\def\jiacu{\special{pdf: literal direct q 0.2 w 2 Tr}\aftergroup\jiacuu}
+\def\jiacuu{\special{pdf: literal 0 Tr}}
+
+\ifxetex
+  \RequirePackage{xeCJK}
+  \edef\CJK@UnicodeEnc{UTF8}
+  \def\CJKaddEncHook#1#2{\expandafter\def\csname xeCJK@enc@#1\endcsname{#2}}
+  \def\Unicode#1#2{\@tempcnta#1\relax
+    \multiply\@tempcnta 256\relax
+    \advance\@tempcnta#2\relax
+    \char\@tempcnta}
+  \RequirePackage{CJKnumb}
+  \csname xeCJK@enc@UTF8\endcsname
+  \def\CJK@tenthousand{万}
+  \RequirePackage{graphicx}
+
+\else
+  \RequirePackage{CJK,CJKnumb}
+  \RequirePackage{uniGBK}
+%  \RequirePackage{CJKpunct}\RequirePackage{CJKspace}
+  \AtBeginDocument{\begin{CJK*}{UTF8}{rm}}
+  \AtEndDocument{\newpage\end{CJK*}}
+  \usepackage[pdftex]{graphicx}
+  \def\jiacu{\pdfliteral{q 0.2 w 2 Tr}\aftergroup\jiacuu}
+  \def\jiacuu{\pdfliteral{0 Tr}}
+  \CJK@makeActive
+%　CJKpunct.sty 补丁
+%  \def\CJK@CJK{%
+%    \ifnum\CJKpunct@lastcharclass=\tw@
+%    \else
+%      \kern -1sp\kern 1sp%`
+%    \fi}
+%
+%  {% CJKspace.sty 补丁
+%  \catcode`\-=11
+%  \catcode`\/=0
+%  \catcode`\C=12
+%  \catcode`\J=12
+%  \catcode`\K=12
+%  \catcode`\@=12
+%  \catcode`\\=12
+%  /gdef/cjk---check-next{%
+%    /ifx/cjk-let-token/par
+%    /else
+%      /expandafter/cjk-get-keystring
+%        /meaning/cjk-let-token\CJK@@@/cjk-space-stop
+%      /cjk-temp
+%    /fi}
+%  }
+
+  \DeclareRobustCommand\rmfamily
+    {\not@math@alphabet\rmfamily\mathrm
+     \fontfamily\rmdefault\CJKfamily{rm}\selectfont}
+
+  \DeclareRobustCommand\sffamily
+    {\not@math@alphabet\sffamily\mathsf
+     \fontfamily\sfdefault\CJKfamily{sf}\selectfont}
+
+  \DeclareRobustCommand\ttfamily
+    {\not@math@alphabet\ttfamily\mathtt
+     \fontfamily\ttdefault\CJKfamily{tt}\selectfont}
+  \input{zhwinfonts.tex}
+\fi
+
+\if@NKT@English
+  \def\chaptername{Chapter \arabic{chapter}}
+  \def\thesection{\arabic{chapter}.\arabic{section}}
+  \def\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+  \def\contentsname{CONTENTS}
+  \def\appendixnamenonumber{Appendix}
+  \def\nkrefname{References}
+  \def\tablename{Table}
+  \def\figurename{Figure}
+  \def\NKT@proof{Proof}
+\else
+  \def\chaptername{第\CJKnumber{\arabic{chapter}}章}
+  \def\thesection{第\CJKnumber{\arabic{section}}节}
+  \def\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+  \def\contentsname{目录}
+  \def\appendixnamenonumber{附录}
+  \def\nkrefname{参考文献}
+  \def\tablename{表}
+  \def\figurename{图}
+  \def\NKT@proof{证明}
+\fi
+
+
+\RequirePackage{mathptmx}
+\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+
+\def\songti{\rmfamily\upshape}
+\def\heiti{\bfseries}
+\def\kaiti{\itshape}
+\def\fangsong{\ttfamily}
+\let\kai\kaiti
+\let\song\songti
+\let\hei\heiti
+\let\fs\fangsong
+\punctstyle{quanjiao}
+
+\endlinechar \m@ne
+\newif\if@tocline
+\@toclinetrue
+
+\newif\if@firstappendix
+\@firstappendixtrue
+
+\newdimen\NKTtemp@dim@a
+
+\def\theequation{\arabic{chapter}.\arabic{equation}}
+\@addtoreset{equation}{chapter}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{%
+  \ifnum #2>\c@secnumdepth
+    \let\@svsec\@empty
+  \else
+    \refstepcounter{#1}%
+    \protected@edef\@svsec{\@seccntformat{#1}\relax}%
+  \fi
+  \@tempskipa #5\relax
+  \ifdim \@tempskipa>\z@
+    \begingroup
+     #6{%
+       \@hangfrom{\csname #1special\endcsname\hskip #3\relax\@svsec}%
+          \interlinepenalty \@M \csname #1special\endcsname#8\@@par}%
+    \endgroup
+    \csname #1mark\endcsname{#7}%
+    \addcontentsline{toc}{#1}{%
+      \ifnum #2>\c@secnumdepth \else
+        \protect\numberline{\csname the#1\endcsname}%
+      \fi
+      #7}%
+  \else
+    \def\@svsechd{%
+      #6{\hskip #3\relax
+      \@svsec #8}%
+      \csname #1mark\endcsname{#7}%
+      \addcontentsline{toc}{#1}{%
+        \ifnum #2>\c@secnumdepth \else
+          \protect\numberline{\csname the#1\endcsname}%
+        \fi
+        #7}}%
+  \fi
+  \@xsect{#5}}
+
+\def\@seccntformat#1{\csname the#1\endcsname\quad}
+
+\def\section{
+  \@startsection{section}{1}{\z@}{24pt}{6pt}{\sectionformat}}
+
+\def\subsection{
+  \@startsection{subsection}{2}{\z@}{12pt}{6pt}{\subsectionformat}}
+
+\def\subsubsection{
+  \@startsection{subsubsection}{3}{\z@}{12pt}{6pt}{\subsubsectionformat}}
+
+\def\sectionspecial{\jiacu}
+\def\partformat{\centering\huge\bfseries}
+\def\chapterformat{\centering\fontsize{16}{19}\bfseries\jiacu}
+\def\sectionformat{\centering\bfseries\zihaosi}
+\def\subsectionformat{\bfseries\fontsize{13}{15}\selectfont}
+\def\subsubsectionformat{\bfseries\zihaowu}
+
+
+\def\chapter{
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+  \global\@topnum\z@
+  \secdef\@chapter\@schapter}
+
+\newif\if@NKT@firstchatper
+\@NKT@firstchatpertrue
+
+\def\@chapter[#1]#2{%
+  \if@NKT@firstchatper
+    \arabicpagenumber
+    \@NKT@firstchatperfalse
+  \fi
+  \ifnum \c@secnumdepth >\m@ne
+    \if@mainmatter
+      \refstepcounter{chapter}%
+      \if@NKT@English\else
+        \protected@edef\@currentlabel
+          {\csname p@chapter\endcsname\chaptername}%
+      \fi
+      \typeout{\@chapapp\space\thechapter.}%
+      \addcontentsline{toc}{chapter}%
+      {\protect\numberline{\chaptername}#1}% By Wenchang Sun
+    \else
+      \addcontentsline{toc}{chapter}{#1}%
+    \fi
+  \else
+    \addcontentsline{toc}{chapter}{#1}%
+  \fi
+  \chaptermark{#1}%
+  \addtocontents{lof}{\protect\addvspace{10\p@}}%
+  \addtocontents{lot}{\protect\addvspace{10\p@}}%
+  \if@twocolumn
+    \@topnewpage[\@makechapterhead{#2}]%
+  \else
+    \@makechapterhead{#2}%
+    \@afterheading
+    \@nobreakfalse
+  \fi}
+
+\def\@makechapterhead#1{%
+  \vspace*{\overchapterspace}%
+  \vbox to \chpaterheaderheight{%
+    \vss{\parindent \z@ \raggedright \normalfont
+      \ifnum \c@secnumdepth >\m@ne
+        \if@mainmatter
+          \chapterformat %\@chapapp\space \thechapter
+          \chaptername \hskip\chapternamesep
+          %\par\nobreak
+          %\vskip 20\p@
+        \fi
+      \fi
+      \interlinepenalty\@M
+      \chapterformat #1\par\nobreak}%
+    \vss}%
+  \vspace*{\belowchapterspace}}
+
+\def\@schapter#1{%
+  \if@twocolumn
+    \@topnewpage[\@makeschapterhead{#1}]%
+  \else
+    \@makeschapterhead{#1}%
+    \@afterheading
+    \@nobreakfalse
+  \fi
+  \if@tocline
+    \addcontentsline{toc}{chapter}{\protect\numberline{#1}{}}%
+  \fi
+  \markboth{#1}{#1}}
+
+\def\@makeschapterhead#1{%
+  \vspace*{\overchapterspace}%
+  \vbox to \chpaterheaderheight{
+    \vss{\parindent \z@ \raggedright
+      \normalfont
+      \interlinepenalty\@M
+      \chapterformat  #1\par\nobreak}
+    \vss}
+  \vspace*{\belowchapterspace}}
+
+%   table of contents
+%
+%
+\renewcommand\tableofcontents{%
+  \NKTtemp@dim@a\baselineskip
+  \if@twocolumn
+    \@restonecoltrue\onecolumn
+  \else
+    \@restonecolfalse
+  \fi
+  {\@toclinefalse\chapter*{\contentsname}}
+  \@starttoc{toc}%
+  \if@restonecol
+    \twocolumn
+  \fi
+  \baselineskip\NKTtemp@dim@a}
+
+\newdimen\npnumwidth
+ \newdimen\tocchaptertitlewidth
+ \newdimen\tocsectiontitlewidth
+ \newdimen\tocsubsectiontitlewidth
+
+\if@NKT@English
+  \tocchaptertitlewidth 60pt
+  \tocsectiontitlewidth 36pt
+  \tocsubsectiontitlewidth 60pt
+\else
+  \tocchaptertitlewidth 42pt
+  \tocsectiontitlewidth 42pt
+  \tocsubsectiontitlewidth 60pt
+\fi
+
+\def\l@part#1#2{
+  \addpenalty{\@secpenalty}
+  \addvspace{\csname NKT@toc@over@part\endcsname}%
+  \@tempdima 1.5em\begingroup%
+  \hfil\tocpartfonts #1\hfil
+  \par\endgroup
+  \addvspace{\csname NKT@toc@below@part\endcsname}}
+
+
+\def\l@subsection{\NKT@dottedline{subsection}}
+\def\l@section{\NKT@dottedline{section}}
+\def\l@chapter{\NKT@dottedline{chapter}}
+
+\def\NKT@dottedline#1#2#3{
+ {\addpenalty{\@secpenalty}
+  \addvspace{\csname NKT@toc@over@#1\endcsname}%
+  \begingroup
+    \csname toc#1fonts\endcsname
+    \parindent \csname toc#1indent\endcsname
+    \rightskip \@pnumwidth
+    \parfillskip -\@pnumwidth
+    \leavevmode
+    \leftskip\csname toc#1indent\endcsname
+    \advance\leftskip\csname toc#1titlewidth\endcsname
+    \advance\leftskip\toctitlesep
+    \hskip -\leftskip
+    \setnewwidth{#1}{#2}\nobreak\hfil\settowidth\npnumwidth{#3}%
+    \nobreak\leaders\hbox{\tocleaders}%
+    \hfill\nobreak\settowidth\npnumwidth{#3}%
+    \hbox to\npnumwidth{\hfil #3}%
+    \par
+  \endgroup
+  \addvspace{\csname NKT@toc@below@#1\endcsname}}}
+
+
+
+\newdimen\NKT@tempdim
+
+\def\setnewwidth#1{
+  \def\numberline{\csname NKT#1numberline\endcsname}}
+
+\def\NKTchapternumberline#1{
+  \NKT@settoctitlewidth{chapter}{#1}
+  \hbox to \NKT@tempdim{#1\hfil}\hskip \toctitlesep}
+
+\def\NKTsectionnumberline#1{
+  \NKT@settoctitlewidth{section}{#1}
+  \hbox to \NKT@tempdim{\hfil #1}\hskip \toctitlesep}
+
+\def\NKTsubsectionnumberline#1{
+  \NKT@settoctitlewidth{subsection}{#1}
+  \hbox to \NKT@tempdim{\hfil #1}\hskip \toctitlesep}
+
+\def\NKT@settoctitlewidth#1#2{
+  \settowidth\NKT@tempdim{#2}
+  \ifdim\NKT@tempdim<\csname toc#1titlewidth\endcsname
+    \NKT@tempdim =\csname toc#1titlewidth\endcsname
+  \fi}
+
+\def\tocdepth#1{
+  \ifcase #1
+      \def\tableofcontents{}
+      \renewcommand{\l@chapter}[2]{}
+      \renewcommand{\l@section}[2]{}
+      \renewcommand{\l@subsection}[2]{}
+  \or \renewcommand{\l@section}[2]{}
+      \renewcommand{\l@subsection}[2]{}
+  \or \renewcommand{\l@subsection}[2]{}
+  \fi}
+
+
+
+% page style
+%
+%
+\def\sethead#1{
+  \def\@oddhead{#1}
+  \if@twoside
+    \def\@evenhead{#1}
+  \fi}
+
+\if@twoside
+  \def\ps@centerheadings{
+    \let\@mkboth\markboth
+    \def\@oddfoot{{\small\hfil  \thepage \hfil}}
+    \def\@evenfoot{{\small\hfil  \thepage \hfil}}
+    \def\setevenhead{\def\@evenhead{\protect\rule[-5pt]{\textwidth}{0.5pt}\hspace{-\textwidth}
+     \headingfonts\hfil  \leftmark\hfil}}
+    \sethead{\protect\rule[-5pt]{\textwidth}{0.5pt}\hspace{-\textwidth}
+    \headingfonts \hfil \rightmark \hfil }
+    \def\chaptermark##1{
+      \markboth{\chaptername \ \  ##1}{\chaptername \ \  ##1}}
+    \def\sectionmark##1{}}
+
+    \def\ps@plain{
+      \let\@mkboth\markboth
+      \def\@oddfoot{{\small\hfil $\cdot$\, \thepage \, $\cdot$\hfil}}
+      \def\@evenfoot{{\small\hfil $\cdot$\, \thepage \, $\cdot$\hfil}}
+      \sethead{}}
+\else
+  \def\ps@centerheadings{
+    \let\@mkboth\markboth
+    \def\@oddfoot{{\small\hfil $\cdot$\, \thepage \, $\cdot$\hfil}}
+    \sethead{\protect\rule[-5pt]{\textwidth}{0.5pt}\hspace{-\textwidth}
+    \headingfonts \hfil\rightmark\hfil  }
+     \def\chaptermark##1{
+     \markright{
+       \ifnum \c@secnumdepth >\m@ne
+         \if@mainmatter
+           \chaptername \ \ %
+         \fi
+       \fi
+       ##1}}
+    \def\sectionmark##1{}
+    \def\subsectionmark##1{}}
+
+  \def\ps@plain{
+     \let\@mkboth\markboth
+     \def\@oddfoot{{\small\hfil $\cdot$\, \thepage \, $\cdot$\hfil}}
+     \def\@evenfoot{{\small\hfil $\cdot$\, \thepage \, $\cdot$\hfil}}
+     \def\@evenhead{}
+     \sethead{}}
+\fi
+
+\def\headingfonts{\rmfamily\zihaowu}
+\def\thesisname{}
+
+\def\thefigure{\thechapter.\arabic{figure}}
+\def\thetable{\thechapter.\arabic{table}}
+\@addtoreset{figure}{chapter}
+\@addtoreset{table}{chapter}
+
+\long\def\@caption#1[#2]#3{%
+  \par
+  \addcontentsline{\csname ext@#1\endcsname}{#1}%
+    {\protect\numberline{\csname the#1\endcsname}{\ignorespaces #2}}%
+  \begingroup
+    \@parboxrestore
+    \if@minipage
+      \@setminipage
+    \fi
+    \normalsize
+    \@makecaption[#1]{\csname fnum@#1\endcsname}{\ignorespaces #3}\par
+  \endgroup}
+
+\long\def\@makecaption[#1]#2#3{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{\zihaowu #2\hskip\NK@captionsep #3}%
+  \ifdim \wd\@tempboxa >\hsize
+    {\zihaowu #2\hskip\NK@captionsep #3}\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\csname belowcaptionskip@#1\endcsname}
+
+\def\c@sihao@pt{14}
+\def\c@xiaosihao@pt{12}
+\def\c@wuhao@pt{10.5}
+\def\c@xiaowuhao@pt{9}
+\def\c@liuhao@pt{7.5}
+
+\def\NKT@definezihao#1#2#3{
+  \def#1{\fontsize{#2}{#3}\selectfont}}
+
+\NKT@definezihao{\zihaochu}{42}{50}
+\NKT@definezihao{\zihaoxiaochu}{36}{44}
+\NKT@definezihao{\zihaoyi}{28}{34}
+\NKT@definezihao{\zihaoer}{22}{26}
+\NKT@definezihao{\zihaoxiaoer}{18}{22}
+\NKT@definezihao{\zihaosan}{15.7}{19}
+\NKT@definezihao{\zihaosi}{14}{17}
+\NKT@definezihao{\zihaoxiaosi}{12}{14}
+\NKT@definezihao{\zihaowu}{10.5}{12}
+\NKT@definezihao{\zihaoxiaowu}{9}{11}
+\NKT@definezihao{\zihaoliu}{7.875}{9}
+\NKT@definezihao{\zihaoqi}{5.25}{6}
+
+\def\figurenote#1{\zihaoxiaowu #1}
+
+\renewenvironment{thebibliography}[1]{
+  \chapter*{\bibname}%
+  \list{\@biblabel{\@arabic\c@enumiv}}%
+       {\settowidth\labelwidth{\@biblabel{#1}}%
+        \leftmargin\labelwidth
+        \advance\leftmargin\labelsep
+        \@openbib@code
+        \usecounter{enumiv}%
+        \let\p@enumiv\@empty
+        \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+  \sloppy
+  \clubpenalty4000
+  \@clubpenalty \clubpenalty
+  \widowpenalty4000%
+  \sfcode`\.\@m}
+  {\def\@noitemerr{
+     \@latex@warning{Empty `thebibliography' environment}}%
+   \endlist}
+
+\def\appendix{
+  \if@firstappendix
+     \setcounter{chapter}{0}%
+     \setcounter{section}{0}%
+     \renewcommand\@chapapp{Appendix}
+     \typeout{....\AppendicesTotal...}
+     \ifnum\AppendicesTotal=1
+         \renewcommand\chaptername{\appendixnamenonumber}
+     \else
+         \renewcommand\chaptername{\appendixname}
+     \fi
+     \@firstappendixfalse
+  \fi
+  \chapter}%
+
+\def\AppendicesTotal{0}
+
+\def\AppendicesNumber#1{\gdef\AppendicesTotal{#1}}
+
+\AtEndDocument{
+  \if@firstappendix
+  \else
+    \immediate\write\@auxout{\string\AppendicesNumber{\thechapter}}
+  \fi}
+
+\def\arabicpagenumber{
+  \setcounter{page}{1}
+  \def\thepage{\arabic{page}}}
+
+\def\thepage{\Roman{page}}
+
+\def\sectionname{\thesection}
+\def\subsectionname{\thesubsection}
+
+
+\newcount\NKT@itemcnt
+\NKT@itemcnt=0
+
+\def\standardpageset{
+  \paperwidth 210mm
+  \paperheight 297mm
+  \textheight 220mm
+  \textwidth 146mm
+  \oddsidemargin 32mm
+  \advance\oddsidemargin -1in
+  \evensidemargin \oddsidemargin
+  \topmargin 38mm
+  \advance \topmargin -1in
+  \advance \topmargin -\headsep
+  \advance \topmargin -\headheight
+  \relax}
+\standardpageset
+
+\def\overchapterspace{24pt}
+\def\belowchapterspace{18pt}
+
+\def\chapternamesep{5mm}
+\def\chpaterheaderheight{16pt}
+
+\def\tocpartfonts{\rmfamily\zihaosi}
+\def\tocchapterfonts{\rmfamily\zihaosi}
+\def\tocsectionfonts{\rmfamily\zihaoxiaosi}
+\def\tocsubsectionfonts{\rmfamily\zihaowu}
+\def\tocleaders{$\cdot\!\cdot\!\cdot\ $}
+\def\tocchapterindent{0em}
+\def\tocsectionindent{2em}
+\def\tocsubsectionindent{2em}
+\def\toctitlesep{12pt}
+\def\NKT@toc@over@part{12pt}
+\def\NKT@toc@below@part{6pt}
+\def\NKT@toc@over@chapter{6pt}
+\def\NKT@toc@below@chapter{0pt}
+\def\NKT@toc@over@section{6pt}
+\def\NKT@toc@below@section{0pt}
+\def\NKT@toc@over@subsection{6pt}
+\def\NKT@toc@below@subsection{0pt}
+
+\def\NK@captionsep{1em}
+
+\setlength\abovecaptionskip{6\p@}
+\setlength\belowcaptionskip{\p@}
+
+\def\abovecaptionskip@figure{0\p@}
+\def\belowcaptionskip@table{6\p@}
+\def\belowcaptionskip@figure{12\p@}
+
+\AtBeginDocument{
+  \fontsize{12}{20}\selectfont
+%  \baselineskip 20pt %
+  \parindent 2em}
+
+%
+%  论文基本信息
+%
+\def\NKT@definekey#1#2{
+  \define@key{NKT}{#1}{
+    \expandafter\def\csname NKT@key@#2\endcsname{##1}}}
+
+\csname CJK@makeInactive\endcsname
+\def\NKT@string@boshi{博士}
+\def\NKT@string@xuelishuoshi{学历硕士}
+\def\NKT@string@zhuanyeshuoshixuewei{硕士专业学位}
+\def\NKT@string@gaoxiaojiaoshi{高校教师}
+\def\NKT@string@tongdengxuelishuoshi{同等学力硕士}
+
+\NKT@definekey{论文题目(中文)}      {lunwentimuzh}
+\NKT@definekey{副标题}              {fubiaoti}
+\NKT@definekey{论文题目(英文)}      {lunwentimuy}
+\NKT@definekey{论文作者}            {lunwenzuozhe}
+\NKT@definekey{学号}                {xuehao}
+\NKT@definekey{指导教师}            {zhidaojiaoshi}
+\NKT@definekey{申请学位}            {shenqingxuewei}
+\NKT@definekey{培养单位}            {peiyangdanwei}
+\NKT@definekey{学科专业}            {xuekezhuanye}
+\NKT@definekey{研究方向}            {yanjiufangxiang}
+\NKT@definekey{中图分类号}          {zhongtufenleihao}
+\NKT@definekey{UDC}                 {UDC}
+\NKT@definekey{学校代码}            {xuexiaodaima}
+\NKT@definekey{密级}                {miji}
+\NKT@definekey{保密期限}            {baomiqixian}
+\NKT@definekey{审批表编号}          {shenpibiaobianhao}
+\NKT@definekey{批准日期}            {pizhunriqi}
+\NKT@definekey{论文完成时间}        {lunwenwanchengshijian}
+\NKT@definekey{答辩日期}            {dabianriqi}
+\NKT@definekey{论文类别}            {lunwenleibie}
+\NKT@definekey{院/系/所}            {yuanxisuo}
+\NKT@definekey{专业}                {zhuanye}
+\NKT@definekey{联系电话}            {lianxidianhua}
+\NKT@definekey{Email}               {Email}
+\NKT@definekey{通讯地址(邮编)}      {tongxundizhi}
+\NKT@definekey{备注}                {beizhu}
+\NKT@definekey{是否批准为非公开论文}{shifougongkai}
+
+\csname CJK@makeActive\endcsname
+
+
+\def\NKT@disableCJK{%
+  \ifnum\the\catcode "81=\active
+    \csname CJK@makeInactive\endcsname
+    \def\NKT@restoreCJK{%
+      \csname CJK@makeActive\endcsname}
+  \else
+    \let\NKT@restoreCJK\relax
+  \fi}
+
+\def\NKTsetup{%
+  \NKT@disableCJK
+  \NKT@jibenxinxi}%
+
+\endlinechar `\^^M
+
+\def\NKT@jibenxinxi#1{%
+  \bgroup
+    \setkeys{NKT}{#1}%
+    \NKT@restoreCJK
+    \pagestyle{empty}
+    \@twosidefalse
+    \NKTtitlepage
+    \NKTauthorization
+    \NKTdeclaration
+    \clearpage
+    \ifx\NKT@key@lunwenleibie\NKT@string@boshi
+      \global\@twosidetrue
+      \global\@mparswitchtrue
+    \else
+      \global\@twosidefalse
+      \global\@mparswitchfalse
+    \fi
+  \egroup
+  \setcounter{page}{1}
+  \pagestyle{centerheadings}}
+
+\def\NKT@keyvalue#1{%
+  \edef\NKT@temp{\csname NKT@key@#1\endcsname}%
+  \scantokens\expandafter{\NKT@temp}}
+
+
+\input{NKThesis.cfg}
+\input{NKTfonts.cfg}
+
+\newcommand\setpaperdimen[2]{
+  \pdfpagewidth=#1 true mm
+  \pdfpageheight=#2 true mm
+  \relax}
+
+\setpaperdimen{210}{297}
+
+\let\makeschapterhead\@makeschapterhead
+
+\def\XeLaTeX{X\kern-.1667em\lower.5ex\hbox{\reflectbox{E}}\kern-.1667em\LaTeX}
+
+\def\XeTeX{X\kern-.1667em\lower.5ex\hbox{\reflectbox{E}}\kern-.1667em\TeX}
+
+%
+%  删除列表项之间的间隔.
+\def\@listi{%
+  \leftmargin\leftmargini
+  \parsep 0pt%
+  \topsep \parsep
+  \itemsep \parsep}
+\let\@listI\@listi
+\@listi
+\def\@listii{%
+  \leftmargin\leftmarginii
+  \labelwidth\leftmarginii
+  \advance\labelwidth-\labelsep
+  \parsep 0pt%
+  \topsep \parsep
+  \itemsep \parsep}
+\def\@listiii{%
+  \leftmargin\leftmarginiii
+  \labelwidth\leftmarginiii
+  \advance\labelwidth-\labelsep
+  \parsep 0pt%
+  \topsep \parsep
+  \itemsep \parsep
+  \partopsep \p@ \@plus\z@ \@minus\p@}
+
+\def\tablecaption#1{%
+  \refstepcounter{table}%
+  {\zihaowu \tablename\nobreakspace\thetable\hskip\NK@captionsep #1}
+  \nopagebreak
+  \vskip\csname belowcaptionskip@table\endcsname
+  \nopagebreak}
+
+\def\figurecaption#1{%
+  \refstepcounter{figure}%
+  \nopagebreak
+  \vskip\abovecaptionskip@figure
+  \nopagebreak
+  {\zihaowu \figurename\nobreakspace\thefigure\hskip\NK@captionsep #1}
+  \vskip\belowcaptionskip@figure}
+
+\renewcommand\enumerate[1][M]{%
+  \ifnum \@enumdepth >3 %
+    \@toodeep
+  \else
+    \advance\@enumdepth\@ne
+    \edef\@enumctr{%
+      enum\romannumeral\the\@enumdepth}%
+    \list{%
+      \csname label\@enumctr\endcsname\,}%
+      {\settowidth\labelwidth{#1}%
+       \leftmargin\labelwidth
+       \advance\leftmargin\labelsep
+       \ifnum\@enumdepth=1 %
+         \advance\leftmargin\parindent
+       \fi
+       \usecounter{\@enumctr} %
+       \listparindent\parindent
+       \itemsep\z@
+%       \def\makelabel##1{%
+%         \mbox{##1}\hfil}%
+       \def\makelabel##1{\hss\llap{##1}}}%
+    \def\newblock{%
+      \hskip .11em plus .33em minus .07em}%
+    \sloppy\clubpenalty4000 %
+    \widowpenalty4000 %
+    \sfcode`\.=1000\relax
+  \fi}
+\let\endenumerate=\endlist
+
+\endinput

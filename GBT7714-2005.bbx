@@ -1,0 +1,473 @@
+
+
+\ProvidesFile{gbt77142005.bbx}%
+	[2016/03/31 v0.2.5 Casper Ti. Vector's biblatex bibliography style]
+
+
+\RequireBiber[3]
+\RequireBibliographyStyle{numeric}
+\setlength\bibitemsep{0pt}
+\newtoggle{bbx:gbk}
+\DeclareBibliographyOption{utf8}[true]{\togglefalse{bbx:gbk}}
+\DeclareBibliographyOption{gbk}[true]{\toggletrue{bbx:gbk}}
+\ExecuteBibliographyOptions{
+	alldates = iso8601, gbk, defernumbers = true,
+	sorting = none, minnames = 3, minitems = 3
+}
+\AtEndOfPackage{%
+	\iftoggle{bbx:gbk}{
+		\input{biblatex-gbt77142005-gbk.def}
+		\ExecuteBibliographyOptions{texencoding = GBK}
+	}{
+		\input{biblatex-gbt77142005-utf8.def}
+		\ExecuteBibliographyOptions{texencoding = UTF-8}
+	}%
+}
+
+
+\newbibmacro*{name:pfgs}[4]{%
+  \ifuseprefix
+  {\usebibmacro{name:delim}{#3#1}%
+    \usebibmacro{name:hook}{#3#1}%
+    \blx@xifempty{#3}{}{%
+      \ifcapital
+      {\mkbibnameprefix{\MakeCapital{#3}}\isdot}
+      {\mkbibnameprefix{#3}\isdot}%
+      \ifprefchar{}{\bibnamedelimc}}%
+    \MakeUppercase{#1}\isdot
+    \blx@xifempty{#2}{}{\revsdnamepunct\bibnamedelimd\MakeUppercase{#2}\isdot}%
+    \blx@xifempty{#4}{}{\bibnamedelimd\mkbibnameaffix{#4}\isdot}}
+   {\usebibmacro{name:delim}{#1}%
+     \usebibmacro{name:hook}{#1}%
+     \MakeUppercase{#1}\isdot
+     \blx@xifempty{#2#3}{}{\revsdnamepunct}%
+     \blx@xifempty{#2}{}{\bibnamedelimd\MakeUppercase{#2}\isdot}%
+     \blx@xifempty{#3}{}{\bibnamedelimd\mkbibnameprefix{#3}\isdot}%
+     \blx@xifempty{#4}{}{,\bibnamedelimd\mkbibnameaffix{#4}\isdot}}}
+
+
+\DeclareFieldFormat{doi}{%
+  \printtext{DOI}\addcolon\space
+  \ifhyperref
+    {\href{http://dx.doi.org/#1}{\nolinkurl{#1}}}
+    {\nolinkurl{#1}}}
+
+
+\DeclareNameFormat{prefix-family-given-suffix}{%
+  \nameparts{#1}%
+  \ifgiveninits
+  {\usebibmacro{name:pfgs}
+    {\namepartfamily}
+    {\namepartgiveni}
+    {\namepartprefix}
+    {\namepartsuffix}}
+  {\usebibmacro{name:pfgs}
+    {\namepartfamily}
+    {\namepartgiven}
+    {\namepartprefix}
+    {\namepartsuffix}}%
+  \usebibmacro{name:andothers}}
+
+
+
+
+\DeclareNameAlias{sortname}{prefix-family-given-suffix}
+\DeclareNameAlias{default}{prefix-family-given-suffix}
+\renewcommand*{\revsdnamepunct}{}
+\renewcommand*{\bibinitperiod}{}
+
+
+\newcommand*{\bbx@cegen}[2]{\iffieldequalstr{userf}{zh}{#1}{#2}}
+\newcommand*{\bbx@cecomma}{\bbx@cegen{\bbx@cncomma}{\addcomma\addspace}}
+\newcommand*{\bbx@cecolon}{\bbx@cegen{\bbx@cncolon}{\addcolon\addspace}}
+\newcommand*{\bbx@cescolon}{\bbx@cegen{\bbx@cnscolon}{\addsemicolon\addspace}}
+\newcommand*{\bbx@ceperiod}{\bbx@cegen{\bbx@cnperiod}{\addperiod\addspace}}
+\newcommand*{\bbx@cespace}{\bbx@cegen{}{\addspace}}
+\newcommand*{\bbx@mybibquote}[1]%
+	{\bbx@cegen{\bbx@cnldquot{#1}\bbx@cnrdquot}{\mkbibquote{#1}}}
+\renewcommand*{\finallistdelim}%
+	{\bbx@cegen{\bbx@cncomma}{\addspace}}
+%\renewcommand*{\finalnamedelim}%
+  %{\bbx@cegen{\bbx@cncomma}{\addspace\bibstring{and}\space}}
+\renewcommand*{\finalnamedelim}{\bbx@cecomma}
+\renewcommand*{\multilistdelim}{\bbx@cecomma}
+\renewcommand*{\multinamedelim}{\bbx@cecomma}
+\renewcommand*{\andmoredelim}{\bbx@cespace}
+\renewcommand*{\andothersdelim}{\bbx@cespace}
+\renewcommand*{\postnotedelim}{\bbx@cecomma}
+\renewcommand*{\finentrypunct}{\bbx@cegen{\bbx@cnperiod}{.}}
+\renewcommand{\bibendnotewrapper}[1]{\bibsentence #1\bbx@cnperiod}
+\renewcommand{\bibfootnotewrapper}[1]{\bibsentence #1\bbx@cnperiod}
+\DefineBibliographyExtras{english}{%
+  \renewcommand*{\finalandcomma}{\bbx@cegen{\bbx@cncomma}{\bbx@cecomma}}%
+}
+
+
+% The alternative settings in comments can be used in case a really plain style
+% (without quotes, italic and bold) is demanded; be prepared that the style
+% might look really ugly.
+\DefineBibliographyStrings{english}{
+	%andmore = {\bbx@cegen{\bbx@cnetal}{\mkbibemph{et\addabbrvspace al\adddot}}},
+	%andothers = {\bbx@cegen{\bbx@cnetal}{\mkbibemph{et\addabbrvspace al\adddot}}},
+  andmore = {\bbx@cegen{\bbx@cnetal}{et\addabbrvspace al\adddot}},
+  andothers = {\bbx@cegen{\bbx@cnetal}{et\addabbrvspace al\adddot}},
+	bibliography = {\bbx@cnbib}, references = {\bbx@cnbib}
+}
+%\DeclareFieldFormat*{booktitle}{\mkbibemph{#1}}
+%\DeclareFieldFormat*{journaltitle}{\mkbibemph{#1}}
+%\DeclareFieldFormat*{title}{\mkbibemph{#1}}
+%\DeclareFieldFormat*{year}{\mkbibbold{#1}}
+%\DeclareFieldFormat*{volume}{\mkbibemph{#1}}
+\DeclareFieldFormat*{booktitle}{#1}
+\DeclareFieldFormat*{journaltitle}{#1}
+\DeclareFieldFormat*{title}{#1}
+\DeclareFieldFormat*{year}{#1}
+\DeclareFieldFormat*{volume}{#1}
+\DeclareFieldFormat*{pages}{#1}
+\DeclareFieldFormat*{url}{\url{#1}}
+\DeclareFieldFormat*{urldate}{\mkbibbrackets{#1}}
+%\DeclareFieldFormat[inbook, inproceedings, incollection, article]%
+	%{title}{\bbx@mybibquote{\mkbibemph{#1}}}
+\DeclareFieldFormat[inbook, inproceedings, incollection, article]%
+  {title}{#1}
+\DeclareFieldFormat*{type}{\mkbibbrackets{#1}}
+\DeclareListFormat*{organization}{#1}
+\DeclareFieldFormat*{number}{\mkbibparens{#1}}
+\DeclareFieldFormat[patent]{number}{#1}
+\renewbibmacro*{title}{\iffieldundef{title}{}{\printfield{title}}}
+\newbibmacro*{type}{\iffieldundef{type}{}{\printfield{type}}}
+\newbibmacro*{number}{\iffieldundef{number}{}{\printfield{number}}}
+\newbibmacro*{cein:}{\printtext{\bbx@cnin}}
+\newcommand*{\bbx@byspace}[1]{%
+	\ifnumgreater{\value{#1}}{\value{maxnames}}{}{\addspace}%
+}
+
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldsource=bookorganization,fieldtarget=usera]
+    }
+  }
+}
+
+
+\newbibmacro*{cebyauthor}{%
+	\ifnameundef{author}{}{%
+		\bbx@cegen%
+    {\printnames{author}\printtext{\bbx@byspace{author}\bbx@cnauth}}%
+		% `\usebibmacro{byauthor}' does not print with `useauthor' enabled.
+		{\printnames[byauthor]{author}}%
+	}%
+}
+\newbibmacro*{cebyeditor}{%
+	\ifnameundef{editor}{}{%
+    \printnames{editor}%
+		%\bbx@cegen%
+		%{\printnames{editor}\printtext{\bbx@byspace{editor}\bbx@cnedit}}%
+		%{\usebibmacro{byeditor}}%
+	}%
+}
+\newbibmacro*{cebytranslator}{%
+	\ifnameundef{translator}{}{%
+		\bbx@cegen%
+		{\printnames{translator}\printtext{\bbx@byspace{translator}\bbx@cntrans}}%
+		{\usebibmacro{bytranslator}}%
+	}%
+}
+\newbibmacro*{author+others}{%
+	\ifthenelse%
+	{\ifnameundef{author} \and \ifnameundef{editor} \and \ifnameundef{translator}}%
+  {\iflistundef{organization}%
+    {}%
+    {\printlist{organization}}}%
+	{%
+		\ifthenelse{\ifnameundef{editor} \and \ifnameundef{translator}}%
+		{\printnames{author}}%
+		{%
+			\usebibmacro{cebyauthor}\setunit*{\bbx@cescolon}%
+			\usebibmacro{cebyeditor}\setunit*{\bbx@cescolon}%
+			\usebibmacro{cebytranslator}%
+		}%
+	}%
+}
+\newbibmacro*{journaltitle/title}{%
+	\iffieldundef{journaltitle}{\usebibmacro{title}}{\printfield{journaltitle}}%
+}
+\newbibmacro*{year/date}{%
+	\ifthenelse{\iffieldundef{month} \and \iffieldundef{day}}%
+	{\printfield{year}}{\printdate}%
+}
+\newbibmacro*{(year+volume+number)/date}{%
+  \ifthenelse{\iffieldundef{month} \and \iffieldundef{day}}%
+  {%
+    \printfield{year}\setunit*{\bbx@cecomma}%
+    \printfield{volume}\setunit{}%
+  }{\printdate}%
+  \usebibmacro{number}%
+}
+\renewbibmacro*{urldate}{%
+  \iffieldundef{urlyear}{\setunit{\bbx@ceperiod}}{%
+    \setunit{\addspace}%
+    \printurldate
+	}%
+}
+
+
+\DeclareBibliographyDriver{online}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\usebibmacro{author+others}\setunit{\bbx@ceperiod}%
+	\newblock
+  \usebibmacro{title}%
+  \usebibmacro{type}.%
+	\newblock
+	\printlist{location}\setunit*{\bbx@cecolon}%
+  \printlist{publisher}\setunit{\bbx@cecomma}%
+	\usebibmacro{year/date}\setunit*{\bbx@cecolon}%
+	\printfield{pages}%\setunit{\bbx@ceperiod}%
+	\newblock
+  \usebibmacro{urldate}\setunit{\bbx@ceperiod}
+  \printfield{url}\setunit*{\bbx@ceperiod}%
+  \printfield{doi}\setunit*{\bbx@ceperiod}%
+  \usebibmacro{finentry}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\DeclareBibliographyDriver{book}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\usebibmacro{author+others}\setunit{\bbx@ceperiod}%
+	\newblock
+	%\usebibmacro{title}\setunit*{\addspace}%
+  \usebibmacro{title}%
+	\usebibmacro{type}\setunit{\bbx@ceperiod}%
+  \printfield{edition}\setunit{\bbx@ceperiod}%
+	\newblock
+  \iflistundef{location}%
+  {\bbx@cegen{[\bbx@cnsl]}{[S.l]}}%
+  {\printlist{location}}\setunit{\bbx@cecolon}%
+  \iflistundef{publisher}%
+  {\bbx@cegen{\printtext{[\bbx@cnsn]}}{\printtext{[s.n.]}}}%
+  {\printlist{publisher}}\setunit{\bbx@cecomma}%
+	\usebibmacro{year/date}\setunit*{\bbx@cecolon}%
+  \printfield{pages}%\setunit{\bbx@ceperiod}%
+	\newblock
+  \usebibmacro{urldate}\setunit{\bbx@ceperiod}
+  \printfield{url}\setunit*{\bbx@ceperiod}%
+  \printfield{doi}\setunit*{\bbx@ceperiod}%
+  \usebibmacro{finentry}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\DeclareBibliographyDriver{incollection}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\usebibmacro{author+others}\setunit{\bbx@ceperiod}%
+	\newblock
+	\usebibmacro{title}\setunit*{\bbx@cespace}%
+	\usebibmacro{type}%
+	\newblock
+	\usebibmacro{cein:}%
+	\newblock
+  \iffieldundef{usera}{\printnames{bookauthor}}{\printfield{usera}}%
+  \setunit*{\bbx@ceperiod}%
+	\newblock
+	\printfield{booktitle}\setunit{\bbx@ceperiod}%
+	\newblock
+	\printlist{location}\setunit*{\bbx@cecolon}%
+	\printlist{publisher}\setunit{\bbx@cecomma}%
+	\usebibmacro{year/date}\setunit*{\bbx@cecolon}%
+	\printfield{pages}\setunit{\bbx@ceperiod}%
+	\newblock
+  \usebibmacro{urldate}\setunit*{\bbx@ceperiod}%
+	\printfield{url}\setunit*{\bbx@ceperiod}%
+  \printfield{doi}\setunit*{\bbx@ceperiod}%
+	\usebibmacro{finentry}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\DeclareBibliographyDriver{periodical}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\usebibmacro{author+others}\setunit{\bbx@ceperiod}%
+	\newblock
+	\usebibmacro{journaltitle/title}\setunit*{\addspace}%
+	\usebibmacro{type}\setunit{\bbx@ceperiod}%
+	\newblock
+	\usebibmacro{(year+volume+number)/date}\setunit{\bbx@ceperiod}%
+	\newblock
+	\printlist{location}\setunit*{\bbx@cecolon}%
+	\printlist{publisher}\setunit{\bbx@ceperiod}%
+	\newblock
+	\usebibmacro{urldate}%
+  \printfield{url}\setunit*{\bbx@ceperiod}%
+  \printfield{doi}\setunit*{\bbx@ceperiod}%
+  \usebibmacro{finentry}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\providebibmacro*{date+extrayear}{}
+%
+  \renewbibmacro*{date+extrayear}{%
+    \iffieldundef{\thefield{datelabelsource}year}
+      {}
+      {\printtext[parens]{%
+         \printfield{\thefield{datelabelsource}year}%
+         \printfield{extrayear}}}}%
+  \renewbibmacro*{date}{%
+    \iffieldundef{month}
+      {}
+      {\printdate}}%
+  \renewbibmacro*{issue+date}{%
+    \ifboolexpr{
+      test {\iffieldundef{issue}}
+      and
+      test {\iffieldundef{month}}
+    }
+      {}
+      {\printtext[parens]{%
+         \printfield{issue}%
+         \setunit*{\addspace}%
+         \printdate}}%
+    \newunit}
+\DeclareBibliographyDriver{article}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\printnames{author}\setunit{\bbx@ceperiod}%
+	\newblock
+	\usebibmacro{title}\setunit*{\bbx@cespace}%
+	\usebibmacro{type}\setunit{\bbx@ceperiod}%
+	\newblock
+	\printfield{journaltitle}\setunit*{\bbx@cecomma}%
+	\usebibmacro{(year+volume+number)/date}\setunit{\bbx@cecolon}%
+	\printfield{pages}\setunit{\bbx@ceperiod}%
+	\newblock
+  \usebibmacro{urldate}\setunit*{\bbx@ceperiod}%
+  \printfield{url}\setunit*{\bbx@ceperiod}%
+  \printfield{doi}\setunit*{\bbx@ceperiod}%
+	\usebibmacro{finentry}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\DeclareBibliographyDriver{patent}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\usebibmacro{author}\setunit{\bbx@ceperiod}%
+	\newblock
+	\usebibmacro{title}\setunit*{\addspace}%
+	\newblock
+	\printlist{location}\setunit*{\bbx@cecolon}%
+	\usebibmacro{number}%
+	\newblock
+	\usebibmacro{type}\setunit{\bbx@ceperiod}%
+	\newblock
+  \usebibmacro{year/date}\setunit*{\addspace}%
+	\newblock
+  \usebibmacro{urldate}\setunit{\bbx@ceperiod}%
+	\printfield{url}\setunit*{\bbx@ceperiod}%
+  \printfield{doi}\setunit*{\bbx@ceperiod}%
+	\usebibmacro{finentry}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\DeclareBibliographyDriver{customf}{%
+	\usebibmacro{bibindex}%
+	\newblock
+	\printfield{addendum}%
+}
+
+
+\DeclareBibliographyAlias{booklet}{book}
+\DeclareBibliographyAlias{collection}{book}
+\DeclareBibliographyAlias{manual}{book}
+\DeclareBibliographyAlias{misc}{book}
+%\DeclareBibliographyAlias{online}{book}
+\DeclareBibliographyAlias{proceedings}{book}
+\DeclareBibliographyAlias{report}{book}
+\DeclareBibliographyAlias{thesis}{book}
+\DeclareBibliographyAlias{unpublished}{book}
+\DeclareBibliographyAlias{inbook}{incollection}
+\DeclareBibliographyAlias{inproceedings}{incollection}
+\DeclareBibliographyAlias{*}{book}
+
+
+\DeclareSortingScheme{ecnty}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{
+		\field{userf}
+	}
+	\sort{
+		\field{sortname}
+		\field{author}
+		\field{editor}
+		\field{translator}
+		\field{sorttitle}
+		\field{title}
+	}
+	\sort{
+		\field{sorttitle}
+		\field{title}
+	}
+	\sort{
+		\field{sortyear}
+		\field{year}
+	}
+}
+
+
+\DeclareSortingScheme{centy}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort[direction = descending]{
+		\field{userf}
+	}
+	\sort{
+		\field{sortname}
+		\field{author}
+		\field{editor}
+		\field{translator}
+		\field{sorttitle}
+		\field{title}
+	}
+	\sort{
+		\field{sorttitle}
+		\field{title}
+	}
+	\sort{
+		\field{sortyear}
+		\field{year}
+	}
+}
+
+
+\DeclareStyleSourcemap{
+	\maps{
+		\map[overwrite]{
+			\step[
+				fieldsource = language, match = \regexp{chinese},
+				fieldset = userf, fieldvalue = {zh}
+			]
+		}
+		\map[overwrite]{
+			\step[fieldsource = userf, match = \regexp{^cn$}, replace = \regexp{zh}]
+		}
+		\map{
+			\step[fieldset = userf, fieldvalue = {en}]
+		}
+	}
+}
+
