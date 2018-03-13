@@ -1,0 +1,26 @@
+ %!TEX program = xelatex
+
+ 
+\begin{tikzpicture}[node distance=2cm]
+ %定义流程图具体形状
+\node (start) [startstop] {Start};
+\node (in1) [io, below of=start] {Input};
+\node (pro1) [process, below of=in1] {Process 1};
+\node (dec1) [decision, below of=pro1, yshift=-0.5cm] {Decision 1};
+\node (pro2a) [process, below of=dec1, yshift=-0.5cm] {Process 2a};
+\node (pro2b) [process, right of=dec1, xshift=2cm] {Process 2b};
+\node (out1) [io, below of=pro2a] {Output};
+\node (stop) [startstop, below of=out1] {Stop};
+ 
+ %连接具体形状
+\draw [arrow](start) -- (in1);
+\draw [arrow](in1) -- (pro1);
+\draw [arrow](pro1) -- (dec1);
+\draw [arrow](dec1) -- (pro2a);
+\draw [arrow](dec1) -- (pro2b);
+\draw [arrow](dec1) -- node[anchor=east] {yes} (pro2a);
+\draw [arrow](dec1) -- node[anchor=south] {no} (pro2b);
+\draw [arrow](pro2b) |- (pro1);
+\draw [arrow](pro2a) -- (out1);
+\draw [arrow](out1) -- (stop);
+\end{tikzpicture}
