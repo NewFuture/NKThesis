@@ -1,6 +1,8 @@
-%!TEX program = xelatex
-%!TEX encoding = UTF-8 Unicode
-% -*- coding: utf-8 -*-
+% !TEX encoding = UTF-8 Unicode
+% !TEX program = xelatex
+% !BIB program = biber
+% !TEX TS-program = xelatex
+% !BIB TS-program = biber
 %%
 %%
 %%
@@ -30,17 +32,10 @@
 
 \usepackage[emptydoublepage]{NKThesis}   % 中文
 %\usepackage[emptydoublepage,English]{NKThesis} % 英文
+
 \usepackage{amssymb}
-%   根据需要选择 biblatex 宏包选项.
-% \usepackage[backend = bibtex8, defernumbers = true,  sorting=none,  style = nkthesis]{biblatex}
-% \hypersetup{colorlinks=true,
-%             pdfborder=0 0 1,
-%             citecolor=black,
-%             linkcolor=black}
-%   根据需要选择 biblatex 宏包选项.
-% 使用gb7714-2015代替
-% https://github.com/hushidong/biblatex-gb7714-2015
-\usepackage[backend = biber, style = gb7714-2015]{biblatex}
+
+\usepackage[backend = biber, style = gb7714-2015, defernumbers = true]{biblatex}
 % 解决url不换行问题
 % https://tex.stackexchange.com/questions/134191/line-breaks-of-long-urls-in-biblatex-bibliography
 \defcounter{biburlnumpenalty}{3000}
@@ -86,6 +81,7 @@ resume
 \newtheorem{Proposition}[Theorem]{\hskip 2em 命题}
 \newtheorem{Definition}[Theorem]{\hskip 2em 定义}
 \newtheorem{Example}[Theorem]{\hskip 2em 例}
+
 \begin{document}
 
 %  设置基本信息
