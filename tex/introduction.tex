@@ -1,3 +1,4 @@
+% !TeX root = ../main.tex
 % -*- coding: utf-8 -*-
 
 \chapter{南开大学学位论文格式宏包 NKThesis 使用说明} \label{chpt:A}
@@ -10,17 +11,14 @@
 
 本模板可以使用以下两种方式编译:
 \begin{enumerate}
- \item PDF\LaTeX
-
  \item \XeLaTeX [推荐]
 \end{enumerate}
 
 例如，
 \begin{verbatim}
-         pdflatex main
-         bibtex main      % 处理参考文献
-         pdflatex main   % 连续编译两遍
-         pdflatex main   % 以生成正确的文献引用。
+         xelatex main
+         biber main      % 处理参考文献
+         xelatex main   % 连续编译两遍以生成正确的文献引用。
 \end{verbatim}
 
 
@@ -427,19 +425,3 @@ WinEdt 在 5.5 以后的版本支持 UTF-8 编码，而旧版本不支持；
 
 目前已经有很多优秀的\LaTeX\ 作图宏包，如 pgf/Tikz 和 pstricks，两者都具有强大的作图能力。
 
-\chapter{说明}
-
-
-
-本模板参照南开大学学位论文写作规范编写，
-仅仅提供了论文的基本格式，包括章节标题和正文字体、字号等等的设置。
-
-
-
-您自愿使用这个模板。
-提供本模板的目的是为了给您的论文写作带来方便，然而，
-作者不保证这个模板完全符合学校的要求，也不对由此产生的任何后果负责。
-如果您不同意这些条款，请不要使用这个模板。
-
-
-参考文献的录入请参考\ref{manual:ref}。 

@@ -4,87 +4,34 @@
 % !TEX TS-program = xelatex
 % !BIB TS-program = biber
 %%
+%%  本模板方式编译: XeLaTeX + biber
 %%
-%%
-%%
-%%
-%%
-%%  本模板可以使用以下两种方式编译:
-%%
-%%     1. PDFLaTeX
-%%
-%%     2. XeLaTeX [推荐]
-%%
-%%  注意：
-%%    1. 在改变编译方式前应先删除 *.toc 和 *.aux 文件，
-%%       因为不同编译方式产生的辅助文件格式可能并不相同。
-%%
+%%  注意： 在改变编译方式前应先删除 *.toc 和 *.aux 文件，
 %%
 \documentclass[12pt,openright]{book}
 
-
-\usepackage{ifxetex}
-\ifxetex
-  \usepackage[bookmarksnumbered]{hyperref}
-  \usepackage{xeCJK}  
-\else
-  \usepackage[unicode,bookmarksnumbered]{hyperref}
-\fi
-
+% 引入NKThesis包
 \usepackage[emptydoublepage]{NKThesis}   % 中文
 %\usepackage[emptydoublepage,English]{NKThesis} % 英文
 
-\usepackage{amssymb}
-
-\usepackage[backend = biber, style = gb7714-2015, defernumbers = true]{biblatex}
-% 解决url不换行问题
-% https://tex.stackexchange.com/questions/134191/line-breaks-of-long-urls-in-biblatex-bibliography
-\defcounter{biburlnumpenalty}{3000}
-\defcounter{biburlucpenalty}{6000}
-\defcounter{biburllcpenalty}{9000}
-
-% 绘图库
-\usepackage{tikz,mathpazo,pgf}
-\usetikzlibrary{shapes.geometric, 
-				arrows,
-				decorations.pathmorphing,
-				backgrounds, 
-				positioning, 
-				fit,
-				petri, 
-				automata}
- % 流程图定义基本形状
-\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
-\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
-\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
-\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
-\tikzstyle{arrow} = [thick,->,>=stealth]
-
-
+% 参考文献
 \addbibresource{nkthesis.bib}
-\DeclareBibliographyCategory{cited}
-\AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
-
+% 图片文件夹
 \graphicspath{{image/}}
 
 \includeonly{
-abstract,
-manual,
-tikz,
-acknowledgements,
-references,
-appendices,
-resume
+	./tex/abstract,
+	./tex/introduction,
+	./tex/relatedwork,
+	./tex/method,
+	./tex/discussion,
+	./tex/summary,
+	./tex/references,
+	./tex/acknowledgements,
+	./tex/appendices,
+	./tex/resume
 }
-\newtheorem{Theorem}{\hskip 2em 定理}[chapter]
-\newtheorem{Lemma}[Theorem]{\hskip 2em 引理}
-\newtheorem{Corollary}[Theorem]{\hskip 2em 推论}
-\newtheorem{Proposition}[Theorem]{\hskip 2em 命题}
-\newtheorem{Definition}[Theorem]{\hskip 2em 定义}
-\newtheorem{Example}[Theorem]{\hskip 2em 例}
-
 \begin{document}
-
 %  设置基本信息
 %  注意:  逗号`,'是项目分隔符. 如果某一项的值出现逗号, 应放在花括号内, 如 {,}
 %
@@ -95,7 +42,7 @@ resume
 	论文题目(英文) = I Love Nankai,
 	论文作者       = 周恩来,
 	学号           = 19190062,
-	指导教师       = {张伯苓~教授},
+	指导教师       = 张伯苓~教授,
 	申请学位       = 硕士,
 	培养单位       = 南开大学,
 	学科专业       = 文科,
@@ -122,12 +69,19 @@ resume
 }
 
 
-\input{./tex/abstract}
+\include{./tex/abstract}
+
 \tableofcontents
-\input{./tex/manual}
-\input{./tex/tikz}
-\input{./tex/references}
-\input{./tex/acknowledgements}
-\input{./tex/appendices}
-\input{./tex/resume}
+
+\include{./tex/introduction}
+\include{./tex/relatedwork}
+\include{./tex/method}
+\include{./tex/discussion}
+\include{./tex/summary}
+
+\include{./tex/references}
+\include{./tex/acknowledgements}
+\include{./tex/appendices}
+\include{./tex/resume}
+
 \end{document}

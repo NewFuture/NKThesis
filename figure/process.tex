@@ -1,8 +1,13 @@
- %!TEX program = xelatex
+% !TeX root = ../main.tex
 
- 
 \begin{tikzpicture}[node distance=2cm]
  %定义流程图具体形状
+ \tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+ \tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+ \tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+ \tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+ \tikzstyle{arrow} = [thick,->,>=stealth]
+ 
 \node (start) [startstop] {Start};
 \node (in1) [io, below of=start] {Input};
 \node (pro1) [process, below of=in1] {Process 1};

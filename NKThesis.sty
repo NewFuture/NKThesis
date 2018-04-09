@@ -3,6 +3,16 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{NKThesis}[2016/10/12]
 
+\RequirePackage{amssymb}
+\RequirePackage{ifxetex}
+\RequirePackage[backend = biber, style = gb7714-2015, defernumbers=true]{biblatex}
+\defcounter{biburlnumpenalty}{3000}
+\defcounter{biburlucpenalty}{6000}
+\defcounter{biburllcpenalty}{9000}
+\DeclareBibliographyCategory{cited}
+\AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
+\def\bibrangedash{ $\sim$ }
+
 \DeclareOption{emptydoublepage}{
   \def\cleardoublepage{
     \clearpage
@@ -40,10 +50,11 @@
   \csname xeCJK@enc@UTF8\endcsname
   \def\CJK@tenthousand{万}
   \RequirePackage{graphicx}
-
+  \RequirePackage[bookmarksnumbered]{hyperref}
 \else
   \RequirePackage{CJK,CJKnumb}
   \RequirePackage{uniGBK}
+  \RequirePackage[unicode,bookmarksnumbered]{hyperref}
 %  \RequirePackage{CJKpunct}\RequirePackage{CJKspace}
   \AtBeginDocument{\begin{CJK*}{UTF8}{rm}}
   \AtEndDocument{\newpage\end{CJK*}}
@@ -109,9 +120,24 @@
   \def\tablename{表}
   \def\figurename{图}
   \def\NKT@proof{证明}
+  \newtheorem{Theorem}{\hskip 2em 定理}[chapter]
+  \newtheorem{Lemma}[Theorem]{\hskip 2em 引理}
+  \newtheorem{Corollary}[Theorem]{\hskip 2em 推论}
+  \newtheorem{Proposition}[Theorem]{\hskip 2em 命题}
+  \newtheorem{Definition}[Theorem]{\hskip 2em 定义}
+  \newtheorem{Example}[Theorem]{\hskip 2em 例}
 \fi
 
-
+\RequirePackage{tikz,mathpazo,pgf}
+\usetikzlibrary{shapes.geometric, 
+				arrows,
+				decorations.pathmorphing,
+				backgrounds, 
+				positioning, 
+				fit,
+				petri, 
+        automata}
+        
 \RequirePackage{mathptmx}
 \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
@@ -768,5 +794,6 @@
     \sfcode`\.=1000\relax
   \fi}
 \let\endenumerate=\endlist
+
 
 \endinput
