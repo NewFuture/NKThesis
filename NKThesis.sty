@@ -130,12 +130,12 @@
 
 \RequirePackage{tikz,mathpazo,pgf}
 \usetikzlibrary{shapes.geometric, 
-				arrows,
-				decorations.pathmorphing,
-				backgrounds, 
-				positioning, 
-				fit,
-				petri, 
+        arrows,
+        decorations.pathmorphing,
+        backgrounds, 
+        positioning, 
+        fit,
+        petri, 
         automata}
         
 \RequirePackage{mathptmx}
@@ -795,5 +795,123 @@
   \fi}
 \let\endenumerate=\endlist
 
+% 代码块
+\RequirePackage[procnames]{listings}
+\RequirePackage{xcolor}
+\RequirePackage{caption}
+\renewcommand{\lstlistingname}{代码}
+
+\colorlet{commentcolour}{lime!60!black}
+\colorlet{stringcolour}{red!60!black}
+\colorlet{keywordcolour}{magenta!90!black}
+\colorlet{exceptioncolour}{yellow!50!red}
+\colorlet{commandcolour}{yellow!60!black}
+\colorlet{literatecolour}{green!50!black}
+\colorlet{numpycolour}{cyan!90!black}
+\colorlet{promptcolour}{green!50!black}
+\colorlet{specmethodcolour}{violet}
+
+\newcommand*{\setliteratecolour}{\textcolor{literatecolour}}
+\newcommand*{\setlbracketscolour}{\textcolor{violet}}
+\newcommand*{\pythonprompt}{\textcolor{promptcolour}{{>}{>}{>}}}
+
+\lstdefinestyle{Code}{
+  showtabs=false,
+  tabsize=2,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\color{gray},
+  numbersep=5pt,
+  rulecolor=\color{black!40},
+  frame=single,
+  frame=trbl,
+  captionpos=b,
+  breakindent=.5\textwidth,
+  framexleftmargin=1.5em,
+  xleftmargin=2em,
+  literate=*%
+  {:}{{\setliteratecolour:}}{1}%
+  {=}{{\setliteratecolour=}}{1}%
+  {-}{{\setliteratecolour-}}{1}%
+  {+}{{\setliteratecolour+}}{1}%
+  {*}{{\setliteratecolour*}}{1}%
+  {.}{{\setliteratecolour{.}}}1%
+  {/}{{\setliteratecolour/}}{1}%
+  {>>}{{\setliteratecolour{>>}}}2%
+  {!}{{\setliteratecolour!}}{1}%
+  {<}{{\setliteratecolour<}}{1}%
+  {>}{{\setliteratecolour>}}{1}%
+  {(}{{\setlbracketscolour(}}{1}%
+  {)}{{\setlbracketscolour)}}{1}%
+  {[}{{\setlbracketscolour[}}{1}%
+  {]}{{\setlbracketscolour]}}{1}%
+  {(}{{\setlbracketscolour(}}{1}%
+  {)}{{\setlbracketscolour)}}{1}%
+  {\{}{{\setlbracketscolour\{}}{1}%
+  {\}}{{\setlbracketscolour\}}}{1}%
+  ,%
+  otherkeywords={\&, \|},
+  keywordstyle=\color{keywordcolour}\bfseries,
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{white},
+  commentstyle=\color{commentcolour},
+  stringstyle=\color{stringcolour}
+}
+
+\lstdefinestyle{Python}{
+  language=Python,
+  style=Code,
+  morecomment=[s]{"""}{"""},
+  otherkeywords={\%},
+  procnamekeys={def,class}
+  emph={
+    and,break,class,continue,def,yield,del,elif ,else,%
+    except,exec,finally,for,from,global,if,import,in,%
+    lambda,not,or,pass,print,raise,return,try,while,assert,with
+  },
+  emphstyle=\color{blue}\bfseries,
+  emph={[2]True, False, None},
+  emphstyle=[2]\color{keywordcolour},
+  emph={[3]object,type,isinstance,copy,deepcopy,zip,enumerate,reversed,list,set,len,dict,tuple,xrange,append,execfile,real,imag,reduce,str,repr},
+  emphstyle=[3]\color{commandcolour},
+  emph={[4]ode, fsolve, sqrt, exp, sin, cos,arctan, arctan2, arccos, pi,  array, norm, solve, dot, arange, isscalar, max, sum, flatten, shape, reshape, find, any, all, abs, plot, linspace, legend, quad, polyval,polyfit, hstack, concatenate,vstack,column_stack,empty,zeros,ones,rand,vander,grid,pcolor,eig,eigs,eigvals,svd,qr,tan,det,logspace,roll,min,mean,cumsum,cumprod,diff,vectorize,lstsq,cla,eye,xlabel,ylabel,squeeze},
+  emphstyle=[4]\color{numpycolour},
+  emph={[5]__init__,__add__,__mul__,__div__,__sub__,__call__,__getitem__,__setitem__,__eq__,__ne__,__nonzero__,__rmul__,__radd__,__repr__,__str__,__get__,__truediv__,__pow__,__name__,__future__,__all__},
+  emphstyle=[5]\color{specmethodcolour},
+  emph={[6]assert,yield,range},
+  emphstyle={[6]\color{keywordcolour}\bfseries},
+  literate=*%
+  {**}{{\setliteratecolour{**}}}2%
+  {>>>}{\pythonprompt}{3}%
+  ,%
+  breaklines=false%
+}
+\lstdefinestyle{c++}{
+  language=c++,
+  style=Code,
+  emph={int,char,double,float,unsigned, ssize_t,uint64_t,uint32_t,uint16_t,bool},
+  emphstyle={\color{blue}}
+}
+\lstset{style=Code}
+
+% python 
+\lstnewenvironment{python}[1][]
+{
+\noindent\hspace{0.008\textwidth}\minipage[c]{0.98\textwidth}
+\lstset{
+    style=Python,
+    #1
+}
+}{\endminipage}
+
+% cpp
+\lstnewenvironment{cpp}[1][]
+{
+\noindent\hspace{0.008\textwidth}\minipage[c]{0.98\textwidth}
+\lstset{
+    style=C++,
+    #1
+}
+}{\endminipage}
 
 \endinput

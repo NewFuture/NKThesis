@@ -1,7 +1,9 @@
 % !TeX root = ../main.tex
 % -*- coding: utf-8 -*-
 
-\chapter{The Tikz Package}
+\chapter{常用包}
+
+\section{The Tikz 绘图Package}
 
 
 The {\scshape pdf}\ package, where ``{\scshape pdf}'' is supposed to mean ``portable
@@ -36,3 +38,47 @@ really ``show'' how things will look like.
     \input{./figure/process}
     \caption{\label{fig:exmaple2} 示例流程图2}
 \end{figure}
+
+
+\section{代码块}
+
+python 代码可以直接使用\textbf{python}环境
+
+\begin{python}[caption={斐波那契Python}]
+def fibonacci(n):
+    # Fibonacci number
+    if n < 0:
+        return False
+    if n <= 1:
+        return n
+    return fibonacci(n-2) + fibonacci(n-1)
+\end{python}
+
+C/C++ 代码可以直接使用\textbf{cpp}环境
+
+\begin{cpp}[caption={斐波那契C++}]
+unsigned long Fibonacci(int n)
+{
+    // Fibonacci start from 0
+    if (n <= 1) 
+    {
+        return n;
+    }
+    else 
+    {
+        return Fibonacci(n - 1) + Fibonacci(n - 2);
+    }
+}
+\end{cpp}
+
+其他代码,使用\textbf{lstlisting}指明 \textbf{language}即可，如matlab代码
+
+\begin{lstlisting}[caption={Matlab代码},language=Matlab]
+function a = factorial(n)
+% return n!
+    if n==0
+        a=1;
+    else
+        a=n * factorial(n-1);
+    end
+\end{lstlisting}
