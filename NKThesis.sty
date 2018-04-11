@@ -810,15 +810,17 @@
 \colorlet{keywordcolour}{magenta!90!black}
 \colorlet{exceptioncolour}{yellow!50!red}
 \colorlet{commandcolour}{yellow!60!black}
-\colorlet{literatecolour}{green!50!black}
+\colorlet{literatecolour}{orange}
+\colorlet{operatorcolour}{red}
 \colorlet{numpycolour}{cyan!90!black}
 \colorlet{promptcolour}{green!50!black}
 \colorlet{specmethodcolour}{violet}
 
+\newcommand*{\setoperatorcolour}{\textcolor{operatorcolour}}
 \newcommand*{\setliteratecolour}{\textcolor{literatecolour}}
 \newcommand*{\setlbracketscolour}{\textcolor{violet}}
 \newcommand*{\pythonprompt}{\textcolor{promptcolour}{{>}{>}{>}}}
-
+% Basic code style
 \lstdefinestyle{Code}{
   showtabs=false,
   tabsize=2,
@@ -834,15 +836,18 @@
   framexleftmargin=1.5em,
   xleftmargin=2em,
   literate=*%
-  {:}{{\setliteratecolour:}}{1}%
-  {=}{{\setliteratecolour=}}{1}%
-  {-}{{\setliteratecolour-}}{1}%
-  {+}{{\setliteratecolour+}}{1}%
-  {*}{{\setliteratecolour*}}{1}%
+  {-}{{\setoperatorcolour-}}{1}%
+  {+}{{\setoperatorcolour+}}{1}%
+  {*}{{\setoperatorcolour*}}{1}%
+  {!}{{\setoperatorcolour!}}{1}%
+  % {/}{{\setoperatorcolour/}}{1}%
+  {\|}{{\setoperatorcolour{\|}}}1%
+  {\&}{{\setoperatorcolour{\&}}}1%  
+  {=}{{\setliteratecolour=}}{1}%  
+  {:}{{\setliteratecolour:}}{1}%  
   {.}{{\setliteratecolour{.}}}1%
-  {/}{{\setliteratecolour/}}{1}%
+  {,}{{\setliteratecolour{,}}}1%
   {>>}{{\setliteratecolour{>>}}}2%
-  {!}{{\setliteratecolour!}}{1}%
   {<}{{\setliteratecolour<}}{1}%
   {>}{{\setliteratecolour>}}{1}%
   {(}{{\setlbracketscolour(}}{1}%
@@ -854,19 +859,18 @@
   {\{}{{\setlbracketscolour\{}}{1}%
   {\}}{{\setlbracketscolour\}}}{1}%
   ,%
-  otherkeywords={\&, \|},
   keywordstyle=\color{keywordcolour}\bfseries,
   basicstyle=\ttfamily\footnotesize,
   backgroundcolor=\color{white},
   commentstyle=\color{commentcolour},
-  stringstyle=\color{stringcolour}
+  stringstyle=\color{stringcolour},
 }
 
 \lstdefinestyle{Python}{
   language=Python,
   style=Code,
   morecomment=[s]{"""}{"""},
-  otherkeywords={\%},
+  otherkeywords={\%,/},
   procnamekeys={def,class}
   emph={
     and,break,class,continue,def,yield,del,elif ,else,%
@@ -884,15 +888,17 @@
   emphstyle=[5]\color{specmethodcolour},
   emph={[6]assert,yield,range},
   emphstyle={[6]\color{keywordcolour}\bfseries},
-  literate=*%
-  {**}{{\setliteratecolour{**}}}2%
-  {>>>}{\pythonprompt}{3}%
-  ,%
+  % literate=*%
+  % {**}{{\setliteratecolour{**}}}2%
+  % {/}{{\setoperatorcolour/}}{1}%  
+  % {>>>}{\pythonprompt}{3}%
+  % ,%
   breaklines=false%
 }
 \lstdefinestyle{c++}{
   language=c++,
   style=Code,
+  otherkeywords={\%},  
   emph={int,char,double,float,unsigned, ssize_t,uint64_t,uint32_t,uint16_t,bool},
   emphstyle={\color{blue}}
 }
