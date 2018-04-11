@@ -128,16 +128,7 @@
   \newtheorem{Example}[Theorem]{\hskip 2em 例}
 \fi
 
-\RequirePackage{tikz,mathpazo,pgf}
-\usetikzlibrary{shapes.geometric, 
-        arrows,
-        decorations.pathmorphing,
-        backgrounds, 
-        positioning, 
-        fit,
-        petri, 
-        automata}
-        
+
 \RequirePackage{mathptmx}
 \DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
 
@@ -794,6 +785,19 @@
     \sfcode`\.=1000\relax
   \fi}
 \let\endenumerate=\endlist
+
+% 绘图库
+\RequirePackage{tikz,mathpazo,pgf}
+\usetikzlibrary{shapes.geometric, 
+        arrows,
+        decorations.pathmorphing,
+        backgrounds, 
+        positioning, 
+        fit,
+        petri, 
+        automata
+}
+\RequirePackage{subfigure}
 
 % 代码块
 \RequirePackage[procnames]{listings}

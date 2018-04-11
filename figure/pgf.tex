@@ -1,11 +1,8 @@
 % !TeX root = ../main.tex
 
-\definecolor{yellow1}{rgb}{1,0.8,0.2} 
- 
-
 \begin{tikzpicture}[->,>=stealth,shorten >=1pt,auto,node distance=2.8cm,semithick]
-  \tikzstyle{every state}=[fill=yellow1,draw=none,text=black]
- 
+  \tikzstyle{every state}=[fill=yellow,draw=none,text=black]
+
   \node[state]         (S) at (-6, 0)              {$S$};
   \node[state]         (xin1) at (-2, 3)           {$X^1_{in}$};
   \node[state]         (xin2) at (-2, 1)        {$X^2_{in}$};
@@ -18,7 +15,7 @@
   \node[state]         (xin5)  at (3, -2)   {$X^5_{in}$};
   \node[state]         (xout5) at (5, -2)   {$X^5_{out}$};
   \node[state]         (DC) at (7, 2)           {$DC$};
- 
+
   \path (S) edge[bend left=26]              node {$\infty$} (xin1)
             edge[bend left=12]              node {$\infty$} (xin2)
             edge[bend right=12]             node {$\infty$} (xin3)
