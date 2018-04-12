@@ -39,6 +39,7 @@
 \def\jiacuu{\special{pdf: literal 0 Tr}}
 
 \ifxetex
+  \RequirePackage[bookmarksnumbered]{hyperref}
   \RequirePackage{xeCJK}
   \edef\CJK@UnicodeEnc{UTF8}
   \def\CJKaddEncHook#1#2{\expandafter\def\csname xeCJK@enc@#1\endcsname{#2}}
@@ -50,12 +51,12 @@
   \csname xeCJK@enc@UTF8\endcsname
   \def\CJK@tenthousand{万}
   \RequirePackage{graphicx}
-  \RequirePackage[bookmarksnumbered]{hyperref}
 \else
+  \RequirePackage[unicode,bookmarksnumbered]{hyperref}
   \RequirePackage{CJK,CJKnumb}
   \RequirePackage{uniGBK}
-  \RequirePackage[unicode,bookmarksnumbered]{hyperref}
-%  \RequirePackage{CJKpunct}\RequirePackage{CJKspace}
+  % \RequirePackage{CJKpunct}
+  % \RequirePackage{CJKspace}
   \AtBeginDocument{\begin{CJK*}{UTF8}{rm}}
   \AtEndDocument{\newpage\end{CJK*}}
   \usepackage[pdftex]{graphicx}
@@ -633,7 +634,6 @@
 \NKT@definekey{论文作者}            {lunwenzuozhe}
 \NKT@definekey{学号}                {xuehao}
 \NKT@definekey{指导教师}            {zhidaojiaoshi}
-\NKT@definekey{指导教师职称}         {zhidaojiaoshizhicheng}
 \NKT@definekey{申请学位}            {shenqingxuewei}
 \NKT@definekey{培养单位}            {peiyangdanwei}
 \NKT@definekey{学科专业}            {xuekezhuanye}
