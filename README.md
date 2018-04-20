@@ -10,7 +10,12 @@ thanks to @darfux
 ### 编译方式
 `xelatex`(Tex编译)+`biber`(参考文献编译)
 
-手动编译:
+#### 编译脚本
+
+* windows 双击 `build.cmd`即可
+* linux 在此目录下运行 `./build.cmd`即可
+
+#### 手动编译:
 
 ```
 xelatex main
