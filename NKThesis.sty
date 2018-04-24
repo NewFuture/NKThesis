@@ -11,7 +11,8 @@
 \defcounter{biburllcpenalty}{9000}
 \DeclareBibliographyCategory{cited}
 \AtEveryCitekey{\addtocategory{cited}{\thefield{entrykey}}}
-\def\bibrangedash{ $\sim$ }
+
+\renewcommand*{\bibfont}{\small}
 
 \DeclareOption{emptydoublepage}{
   \def\cleardoublepage{
