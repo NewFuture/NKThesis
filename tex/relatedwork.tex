@@ -9,6 +9,8 @@
 
 模板仅在 TeXLive 2016，TeXLive 2018 下测试通过。对于其它 TeX 发行版可能需要做个别修改。
 
+在 TeXLive 2021 及 2022 下使用的情况已经过实验，请全文搜索含有 \verb+TeXLive2021+ 的注释并做对应改动。
+
 \section{NKThesis 使用说明}
 
 本模板可以使用以下方式编译:
@@ -80,7 +82,7 @@ NKThesis 已经调用以下宏包，您无须重新调用。
 
 插图的例子：
 
-\begin{figure}
+\begin{figure}[htbp]
   \centering
   \includegraphics[viewport=0 0 2984 969,width=40mm]{nankaidaxue.pdf}  
   \caption{\label{fig:nku}南开大学}
@@ -113,6 +115,10 @@ NKThesis 已经调用以下宏包，您无须重新调用。
 \item 手工排版参考文献，然后参考 nkthesis.bib 最后 3 条的格式录入。
 \end{enumerate}
 
+若您使用文献管理软件，多数管理软件均提供了导出.bib文件的功能，但可能需要设置以免导出过多多余字段。
+以下是一个可行方式，仅供参考：使用Zotero管理，并使用Better BibTeX插件导出。
+导出前，在设置项 Better BibTeX > Export > Fields > Fields to omit from export(comma-separated) 中填写了
+\verb+urldate,file,eprint,eprinttype,primaryclass,issn,isbn+ 以省略这些特定字段。
 
 
 \section{一些建议}
@@ -136,7 +142,7 @@ $(x+2)/((3x^2+4)(7+y))$. 下面是居中表达式:
 \]
 
 多行表达式: 尽量在加、减、乘、等号前换行. 在乘号前换行时,
-下一行首用 \string\times:
+下一行首用 \verb+\times+ :
 \def\iint{\mathop{\int\!\!\!\int}}\def\calG{\mathcal G}
 \begin{eqnarray}
 &&\left|(W_{\psi_1}f)(a,b)-(W_{\psi_1}f)(a_j,b_{j,k})\right|^{2}\nonumber\\
