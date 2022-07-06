@@ -1,9 +1,13 @@
 # NKThesis
 南开大学硕士毕业论文(博士论文)Latex模板
 
-当前标准 [南开大学研究生学位论文写作规范（修订版）201709](http://graduate.nankai.edu.cn/2017/0222/c3325a56863/page.htm)
+原标准 [南开大学研究生学位论文写作规范（修订版）201709](http://graduate.nankai.edu.cn/2017/0222/c3325a56863/page.htm)
 
 thanks to @darfux
+
+新标准 [南开大学研究生学位论文写作规范（修订版）20200311](https://graduate.nankai.edu.cn/2021/0122/c23238a337256/page.htm)
+
+> 注：原标准的链接所指向文章，其发表时间仍为2017年，但内容已更新为2020版。
 
 ## 编写
 
