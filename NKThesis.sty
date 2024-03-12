@@ -42,8 +42,9 @@
 \ifxetex
   \RequirePackage{xeCJK}
   \edef\CJK@UnicodeEnc{UTF8}
-  % TexLive2021/2022，xelatex编译时，需注释下行，以免报错LaTeX3 Error: Control sequence \CJKaddEncHook already defined.
+  \ifx\CJKaddEncHook#1#2\undefined
   \def\CJKaddEncHook#1#2{\expandafter\def\csname xeCJK@enc@#1\endcsname{#2}}
+  \fi
   \def\Unicode#1#2{\@tempcnta#1\relax
     \multiply\@tempcnta 256\relax
     \advance\@tempcnta#2\relax
