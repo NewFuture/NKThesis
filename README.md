@@ -51,8 +51,11 @@ xelatex main
 ### 技术支持和讨论
 
 关于此Latex模板, 最早源自网上流传的 Ctex 论坛 milksea 所作版本 (之前无版本不可考，如有了解可补充)。
+
 2018年毕业季前, @darfux 和 @NewFuture 根据 `南开大学研究生学位论文写作规范（修订版）201709`, 以及实际的代码，绘图，等需求，进行修改，并以此作为开源初始本版，使用GitHub管理版本，由社区维护。
+
 此后主要由南开历届毕业生根据遇到的问题进行更新和维护，thanks to @zzeitt @qianchd @lazyfuzzypringle @gsxab @zlgNow 等。
+
 模板格式和编译问题，欢迎之间修改提交Pull Request合并到模板，以便后人。如果对修改/维护模板感兴趣，欢迎加入[维护者](https://github.com/NewFuture/NKThesis/issues)
 
 
