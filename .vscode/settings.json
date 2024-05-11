@@ -1,0 +1,51 @@
+{
+    "latex-workshop.latex.autoClean.run": "onFailed",
+    "latex-workshop.latex.search.rootFiles.include": [
+        "main.tex"
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "xelatex",
+            "command": "xelatex",
+            "args": [
+                "-output-directory=%OUTDIR%",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-halt-on-error",
+                "main.tex"
+            ],
+        },
+        {
+            "name": "biber",
+            "command": "biber",
+            "args": [
+                "main"
+            ]
+        }
+    ],
+    "latex-workshop.linting.chktex.enabled": true,
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "xelatex",
+            "tools": [
+                "xelatex"
+            ]
+        },
+        {
+            "name": "xelatex -> biber -> xelatex* 2",
+            "tools": [
+                "xelatex",
+                "biber",
+                "xelatex",
+                "xelatex"
+            ]
+        },
+        {
+            "name": "biber",
+            "tools": [
+                "biber"
+            ]
+        }
+    ]
+}
