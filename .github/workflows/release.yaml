@@ -29,3 +29,5 @@ jobs:
       
       - name: upload pdf to release
         run: 'gh release upload ${{ github.ref_name }} main.pdf#NKThesis.pdf'
+        env:
+          GH_TOKEN: ${{ github.token }}
