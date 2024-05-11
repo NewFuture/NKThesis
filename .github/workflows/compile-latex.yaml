@@ -29,7 +29,8 @@ jobs:
       - uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
-          texlive_version: 2018
+          texlive_version: 2020
+          latexmk_use_xelatex: true
 
       - name: Upload PDF file
         uses: actions/upload-artifact@v4
