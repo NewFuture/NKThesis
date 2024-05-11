@@ -17,7 +17,6 @@ jobs:
       url: https://github.com/NewFuture/NKThesis/releases/tag/${{ github.ref_name }}
     permissions:
       contents: write
-    needs: [publish-docker, publish-pypi, build-binary]
     steps:
       - uses: actions/checkout@v4
       
