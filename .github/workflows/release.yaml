@@ -1,4 +1,4 @@
-releasename: Release
+name: release
 
 on:
   push:
