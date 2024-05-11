@@ -1,0 +1,32 @@
+releasename: Release
+
+on:
+  push:
+    tags: [v*]
+
+permissions:
+  contents: read
+
+jobs:
+
+  github-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: publish
+      url: https://github.com/NewFuture/NKThesis/releases/tag/${{ github.ref_name }}
+    permissions:
+      contents: write
+    needs: [publish-docker, publish-pypi, build-binary]
+    steps:
+      - uses: actions/checkout@v4
+      
+      # install dependencies
+      - name: install 
+        run: ./init.sh
+
+      - name: build 
+        run: ./build.cmd
+      
+      - name: upload to release
+        run: 'gh release upload ${{github.event.release.tag_name}} main.pdf#NKThesis.pdf'
