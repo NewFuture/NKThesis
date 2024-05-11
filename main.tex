@@ -3,6 +3,7 @@
 % !BIB program = biber
 % !TEX TS-program = xelatex
 % !BIB TS-program = biber
+% !TEX root = ./main.tex
 %%
 %%  本模板方式编译: XeLaTeX + biber
 %%
@@ -33,16 +34,16 @@
 % \makeatother
 
 \includeonly{
-	./tex/abstract,
-	./tex/introduction,
-	./tex/relatedwork,
-	./tex/method,
-	./tex/discussion,
-	./tex/summary,
-	./tex/references,
-	./tex/acknowledgements,
-	./tex/appendices,
-	./tex/resume
+	./tex/0_abstract,
+	./tex/1_introduction,
+	./tex/2_relatedwork,
+	./tex/3_method,
+	./tex/4_discussion,
+	./tex/5_summary,
+	./tex/A1_references,
+	./tex/A2_acknowledgements,
+	./tex/A3_appendices,
+	./tex/A4_resume
 }
 \begin{document}
 
@@ -88,7 +89,7 @@
 % 论文开始部分
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 摘要
-\include{./tex/abstract}
+\include{./tex/0_abstract}
 % 论文目录
 \tableofcontents
 % 列出图表目录，如果需要可取消注释
@@ -97,18 +98,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 论文主体章节
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{./tex/introduction}
-\include{./tex/relatedwork}
-\include{./tex/method}
-\include{./tex/discussion}
-\include{./tex/summary}
+\include{./tex/1_introduction}
+\include{./tex/2_relatedwork}
+\include{./tex/3_method}
+\include{./tex/4_discussion}
+\include{./tex/5_summary}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 论文其他信息
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{./tex/references}
-\include{./tex/acknowledgements}
-\include{./tex/appendices}
-\include{./tex/resume}
+\include{./tex/A1_references}
+\include{./tex/A2_acknowledgements}
+\include{./tex/A3_appendices}
+\include{./tex/A4_resume}
 
 \end{document}
