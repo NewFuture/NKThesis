@@ -114,8 +114,10 @@
   \def\figurename{Figure}
   \def\NKT@proof{Proof}
 \else
-  \def\chaptername{第\CJKnumber{\arabic{chapter}}章}
-  \def\thesection{第\CJKnumber{\arabic{section}}节}
+  \def\chaptertext#1{第\ifcase#1\or 一\or 二\or 三\or 四\or 五\or 六\or 七\or 八\or 九\or 十\fi 章}
+  \def\chaptername{\texorpdfstring{第\CJKnumber{\arabic{chapter}}章}{\chaptertext{\arabic{chapter}}}}
+  \def\thesectiontext#1{第\ifcase#1\or 一\or 二\or 三\or 四\or 五\or 六\or 七\or 八\or 九\or 十\fi 节}
+  \def\thesection{\texorpdfstring{第\CJKnumber{\arabic{section}}节}{\thesectiontext{\arabic{section}}}}
   \def\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
   \def\contentsname{目录}
   \def\appendixnamenonumber{附录}
