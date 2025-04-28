@@ -49,13 +49,13 @@
     \multiply\@tempcnta 256\relax
     \advance\@tempcnta#2\relax
     \char\@tempcnta}
-  \RequirePackage{CJKnumb}
+  \RequirePackage{zhnumber}
   \csname xeCJK@enc@UTF8\endcsname
   \def\CJK@tenthousand{万}
   \RequirePackage{graphicx}
   \RequirePackage[bookmarksnumbered]{hyperref}
 \else
-  \RequirePackage{CJK,CJKnumb}
+  \RequirePackage{CJK,zhnumber}
   \RequirePackage{uniGBK}
   \RequirePackage[unicode,bookmarksnumbered]{hyperref}
 %  \RequirePackage{CJKpunct}\RequirePackage{CJKspace}
@@ -114,8 +114,8 @@
   \def\figurename{Figure}
   \def\NKT@proof{Proof}
 \else
-  \def\chaptername{第\CJKnumber{\arabic{chapter}}章}
-  \def\thesection{第\CJKnumber{\arabic{section}}节}
+  \def\chaptername{第\zhnum{chapter}章}
+  \def\thesection{第\zhnum{section}节}
   \def\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
   \def\contentsname{目录}
   \def\appendixnamenonumber{附录}
