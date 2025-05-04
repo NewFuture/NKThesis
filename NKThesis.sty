@@ -107,6 +107,7 @@
   \def\chaptername{Chapter \arabic{chapter}}
   \def\thesection{\arabic{chapter}.\arabic{section}}
   \def\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+  \def\thesubsubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
   \def\contentsname{CONTENTS}
   \def\appendixnamenonumber{Appendix}
   \def\nkrefname{References}
@@ -116,8 +117,8 @@
 \else
   \def\chaptername{第\zhnum{chapter}章}
   \def\thesection{第\zhnum{section}节}
-  \def\thesubsection{\hspace{2em}\zhnum{subsection}、}
-  \def\thesubsubsection{\hspace{2em}（\zhnum{subsubsection}）}
+  \def\thesubsection{\zhnum{subsection}、}
+  \def\thesubsubsection{（\zhnum{subsubsection}）}
   \def\contentsname{目录}
   \def\appendixnamenonumber{附录}
   \def\nkrefname{参考文献}
