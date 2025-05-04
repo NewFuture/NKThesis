@@ -115,8 +115,8 @@
   \def\NKT@proof{Proof}
 \else
   \def\chaptername{第\zhnum{chapter}章}
-  \def\thesection{第\zhnum{section}节}
-  \def\thesubsection{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+  \def\thesection{第\zhnum{section}节}\arabic{subsection}}
+  \def\thesubsection{{\hskip 2em \CJKnumber{\arabic{subsection}}、}
   \def\contentsname{目录}
   \def\appendixnamenonumber{附录}
   \def\nkrefname{参考文献}
