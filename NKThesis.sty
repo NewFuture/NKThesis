@@ -114,13 +114,17 @@
   \def\tablename{Table}
   \def\figurename{Figure}
   \def\NKT@proof{Proof}
+  \newtheorem{Theorem}{\hskip 2em Theorem}[chapter]
+  \newtheorem{Lemma}[Theorem]{\hskip 2em Lemma}
+  \newtheorem{Corollary}[Theorem]{\hskip 2em Corollary}
+  \newtheorem{Proposition}[Theorem]{\hskip 2em Proposition}
+  \newtheorem{Definition}[Theorem]{\hskip 2em Definition}
+  \newtheorem{Example}[Theorem]{\hskip 2em Example}
 \else
   \def\chaptername{第\zhnum{chapter}章}
   \def\thesection{第\zhnum{section}节}
   \def\thesubsection{\zhnum{subsection}、}
-  \titleformat{\subsection}[hang]{\bfseries\zihaosi}{\hspace{2em}\thesubsection}{}
   \def\thesubsubsection{（\zhnum{subsubsection}）}
-  \titleformat{\subsubsection}[hang]{\bfseries\zihaoxiaosi}{\hspace{2em}\thesubsubsection}{}
   \def\contentsname{目录}
   \def\appendixnamenonumber{附录}
   \def\nkrefname{参考文献}
@@ -166,7 +170,7 @@
     \let\@svsec\@empty
   \else
     \refstepcounter{#1}%
-    \protected@edef\@svsec{\@seccntformat{#1}\relax}%
+    \protected@edef\@svsec{\@seccntformat{#1}{#2}\relax}%
   \fi
   \@tempskipa #5\relax
   \ifdim \@tempskipa>\z@
@@ -194,16 +198,25 @@
   \fi
   \@xsect{#5}}
 
-\def\@seccntformat#1{\csname the#1\endcsname\quad}
-
 \def\section{
   \@startsection{section}{1}{\z@}{24pt}{6pt}{\sectionformat}}
 
-\def\subsection{
-  \@startsection{subsection}{2}{\z@}{12pt}{6pt}{\subsectionformat}}
+\if@NKT@English
+  \def\@seccntformat#1{\csname the#1\endcsname\quad}
 
-\def\subsubsection{
-  \@startsection{subsubsection}{3}{\z@}{12pt}{6pt}{\subsubsectionformat}}
+  \def\subsection{\@startsection{subsection}{2}{\z@}{12pt}{6pt}{\subsectionformat}}
+  \def\subsubsection{\@startsection{subsubsection}{3}{\z@}{12pt}{6pt}{\subsubsectionformat}}
+\else
+  \def\@seccntformat#1#2{%
+    \ifnum#2>1
+      \csname the#1\endcsname % 如果深度大于 1（subsection 及以下），去掉空格
+    \else
+      \csname the#1\endcsname\quad % 否则保留空格
+    \fi}
+    
+  \def\subsection{\@startsection{subsection}{2}{2em}{12pt}{6pt}{\subsectionformat}}
+  \def\subsubsection{\@startsection{subsubsection}{3}{2em}{12pt}{6pt}{\subsubsectionformat}}
+\fi
 
 \def\sectionspecial{\jiacu}
 \def\partformat{\centering\huge\bfseries}
