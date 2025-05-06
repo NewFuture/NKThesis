@@ -525,8 +525,8 @@
         \settoggle{bbx:codegbk}{#1}}
     \ExecuteBibliographyOptions{gbcodegbk}
 
-    \def\str@bibliography{参考文献}
-    \def\str@references{参考文献}
+    \def\str@bibliography{\nkrefname}
+    \def\str@references{\nkrefname}
     \def\str@bytranslator{译}
     \def\str@andotherscn{等}
     \def\str@andcn{和}
@@ -592,8 +592,8 @@
     \DeclareBibliographyOption{gbctexset}[true]{%
       \settoggle{bbx:ctexset}{#1}}
     \ExecuteBibliographyOptions{gbctexset}
-    \providecommand{\bibname}{参考文献}
-    \providecommand{\refname}{参考文献}
+    \providecommand{\bibname}{\nkrefname}
+    \providecommand{\refname}{\nkrefname}
 
     \AtEndOfPackage{%
 	\iftoggle{bbx:ctexset}{%
